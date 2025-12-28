@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'core/theme/app_theme.dart';
 import 'features/landing/view/landing_page.dart';
+import 'features/landing/view/pages/student/profile_page.dart';
+import 'features/landing/view/pages/student/student_shell_page.dart';
 import 'features/landing/view/splash_page.dart';
 
 void main() {
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.grey[200],
       ),
-      home: const SplashPage(),
+      home: const StudentShellPage(),
     );
   }
 }

@@ -19,7 +19,6 @@ class TelmeethAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.white,
       elevation: 0,
       automaticallyImplyLeading: false,
-      // الحل الأهم: إلغاء المسافة الجانبية الافتراضية
       titleSpacing: 0,
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.center,

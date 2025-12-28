@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:telmeeth/core/widgets/app_bar.dart';
+import 'package:telmeeth/features/landing/view/pages/login/login_page.dart';
 import 'package:telmeeth/features/landing/view/sections/contact_section.dart';
 import 'package:telmeeth/features/landing/view/sections/home_section.dart';
 import 'package:telmeeth/features/landing/view/sections/plans_section.dart';
 import 'package:telmeeth/features/landing/view/sections/services_section.dart';
 
+import '../../../core/widgets/telmeeth_app_bar.dart';
 import '../../../core/widgets/telmeeth_drawer.dart';
 
 class MainScreen extends StatelessWidget {
@@ -32,7 +33,10 @@ class MainScreen extends StatelessWidget {
       ),
 
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {Navigator.push(
+             context,
+          MaterialPageRoute(builder: (context) => SignIn()),
+          );},
         icon: const Icon(Icons.login),
         label: const Text('Login'),
         backgroundColor: const Color(0xFF0F4C5C),

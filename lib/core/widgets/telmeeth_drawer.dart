@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:telmeeth/features/landing/view/pages/stories_page.dart';
+import 'package:telmeeth/features/landing/view/pages/landing/ai_tools_page.dart';
+import 'package:telmeeth/features/landing/view/pages/landing/blog_page.dart';
+import 'package:telmeeth/features/landing/view/pages/landing/our_impact_page.dart';
+import 'package:telmeeth/features/landing/view/pages/landing/stories_page.dart';
 
-import '../../features/landing/view/pages/overview_page.dart';
+import '../../features/landing/view/pages/landing/guidance_page.dart';
+import '../../features/landing/view/pages/landing/our_schools_page.dart';
+import '../../features/landing/view/pages/landing/overview_page.dart';
 
 class TelmeethDrawer extends StatelessWidget {
   final VoidCallback onToggleTheme;
@@ -61,7 +66,9 @@ class TelmeethDrawer extends StatelessWidget {
                   ListTile(
                     leading: const Icon(Icons.smart_toy_outlined),
                     title: const Text('AI Tools'),
-                    onTap: () {},
+                    onTap: () {Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const AiToolsPage()),
+                    );},
                   ),
                   ListTile(
                     leading: const Icon(Icons.groups_2),
@@ -73,22 +80,30 @@ class TelmeethDrawer extends StatelessWidget {
                   ListTile(
                     leading: const Icon(Icons.public),
                     title: const Text('Our Impact'),
-                    onTap: () {},
+                    onTap: () { Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const OurImpactPage()),
+                    );},
                   ),
                   ListTile(
                     leading: const Icon(Icons.psychology_alt_outlined),
                     title: const Text('Guidance'),
-                    onTap: () {},
+                    onTap: () { Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const GuidancePage ()),
+                    );},
                   ),
                   ListTile(
                     leading: const Icon(Icons.school_outlined),
                     title: const Text('Our Schools'),
-                    onTap: () {},
+                    onTap: () {Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const OurSchoolsPage  ()),
+                    );},
                   ),
                   ListTile(
                     leading: const Icon(Icons.feed),
                     title: const Text('Blog'),
-                    onTap: () {},
+                    onTap: () { Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const BlogPage()),
+                    );},
                   ),
                 ],
               ),

@@ -25,7 +25,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFF8C00), // لون السبلاش
+      backgroundColor: const Color(0xFFFFFFFF), // لون السبلاش
       body: Center(
         child: Image.asset(
           'assets/logo_telmeeth.png', // استخدم الصورة الجديدة هنا
