@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/widgets/student/student_app_bar.dart';
 import 'package:telmeeth/core/widgets/student_bottom_nav_bar.dart';
+import 'package:telmeeth/features/landing/view/pages/student/tasks_page.dart';
 
-import '../../../../../core/widgets/student_drawer.dart';
+import '../../../../../core/widgets/student/navigation.dart';
+import '../../../../../core/widgets/student/student_drawer.dart';
+import 'home1_page.dart';
+import 'materials_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -11,25 +15,31 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 420),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _header(),
-              const SizedBox(height: 14),
-              _sectionCard(
-                title: "Student Information",
-                child: _studentInfoSection(),
-              ),
-              _sectionCard(
-                title: "Update Profile",
-                child: _updateProfileSection(),
-              ),
-            ],
+    return Scaffold(
+      appBar: StudentAppBar(),
+      drawer: StudentDrawer(),
+      bottomNavigationBar: NavigationBarPrimary(),
+
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _header(),
+                const SizedBox(height: 14),
+                _sectionCard(
+                  title: "Student Information",
+                  child: _studentInfoSection(),
+                ),
+                _sectionCard(
+                  title: "Update Profile",
+                  child: _updateProfileSection(),
+                ),
+              ],
+            ),
           ),
         ),
       ),

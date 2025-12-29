@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:telmeeth/features/landing/view/pages/student/profile_page.dart';
+import 'package:telmeeth/features/landing/view/pages/student/tasks_page.dart';
 
 import '../../../../../core/constants/responsive.dart';
 import '../../../../../core/widgets/student/container.dart';
 import '../../../../../core/widgets/student/custom_container1.dart';
-import '../../../../../core/widgets/student/drawer.dart';
 import '../../../../../core/widgets/student/navigation.dart';
 import '../../../../../core/widgets/student/student_app_bar.dart';
+import '../../../../../core/widgets/student/student_drawer.dart';
+import 'home1_page.dart';
 
 class Materials extends StatelessWidget {
   const Materials({super.key});
@@ -14,7 +17,7 @@ class Materials extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: StudentAppBar(),
-      drawer: AppDrawer(),
+      drawer: StudentDrawer(),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(ResponsiveValues.padding(context, 16)),

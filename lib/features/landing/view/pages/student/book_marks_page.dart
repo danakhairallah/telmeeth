@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/responsive.dart';
 import '../../../../../core/widgets/student/custom_container1.dart';
-import '../../../../../core/widgets/student/drawer.dart';
 import '../../../../../core/widgets/student/navigation.dart';
 import '../../../../../core/widgets/student/student_app_bar.dart';
+import '../../../../../core/widgets/student/student_drawer.dart';
 
 class BookMarks extends StatelessWidget {
   const BookMarks({super.key});
@@ -13,7 +13,7 @@ class BookMarks extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: StudentAppBar(),
-      drawer: AppDrawer(),
+      drawer: StudentDrawer(),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(ResponsiveValues.padding(context, 16)),

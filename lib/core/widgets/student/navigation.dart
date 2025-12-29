@@ -12,7 +12,9 @@ class NavigationBarPrimary extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(ResponsiveValues.padding(context, 8)),
-      width: MediaQuery.sizeOf(context).width,
+      width: MediaQuery
+          .sizeOf(context)
+          .width,
       height: 100,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(

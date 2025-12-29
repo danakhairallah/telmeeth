@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/widgets/student/drawer.dart';
 import '../../../../../core/widgets/student/navigation.dart';
 import '../../../../../core/widgets/student/student_app_bar.dart';
+import '../../../../../core/widgets/student/student_drawer.dart';
 
 class Messages extends StatelessWidget {
   const Messages({super.key});
@@ -11,7 +11,7 @@ class Messages extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: StudentAppBar(),
-      drawer: AppDrawer(),
+      drawer: StudentDrawer(),
       bottomNavigationBar: NavigationBarPrimary(),
     );
   }

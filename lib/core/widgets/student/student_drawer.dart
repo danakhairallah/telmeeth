@@ -20,8 +20,8 @@ import '../../../features/landing/view/pages/student/study_plan_page.dart';
 import '../../../features/landing/view/pages/student/work_sheets_page.dart';
 import '../../constants/responsive.dart';
 
-class AppDrawer extends StatelessWidget {
-  const AppDrawer({super.key});
+class StudentDrawer extends StatelessWidget {
+  const StudentDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {

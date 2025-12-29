@@ -1,255 +1,459 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../core/widgets/student/navigation.dart';
+import '../../../../../core/widgets/student/student_app_bar.dart';
+import '../../../../../core/widgets/student/student_drawer.dart';
+
 class StudentFilePage extends StatelessWidget {
   const StudentFilePage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isMobile = constraints.maxWidth < 800;
-          return Flex(
-            direction: isMobile ? Axis.vertical : Axis.horizontal,
-            children: [
-              Expanded(child: _ProfileInfoCard()),
-              if (!isMobile) const SizedBox(width: 25),
-              Expanded(child: _DocumentsListCard()),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _ProfileInfoCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 18),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 28),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Profile Information",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
-            const SizedBox(height: 2),
-            const Text(
-              "Your official school record details.",
-              style: TextStyle(color: Colors.grey, fontSize: 15),
-            ),
-            const SizedBox(height: 24),
-            _profileRow("Name", "Ahmed Al-Mansouri", bold: true),
-            const SizedBox(height: 10),
-            _profileRow("Student ID", "ST-2023-001", grey: true),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(child: _profileRow("Grade", "Grade 10", grey: true)),
-                Expanded(child: _profileRow("Section", "Section A", grey: true)),
-              ],
-            ),
-            const SizedBox(height: 10),
-            _profileRow("Birth Date", "2008-05-15"),
-            const SizedBox(height: 10),
-            _profileRow("Nationality", "Emirati"),
-            const SizedBox(height: 10),
-            _profileRow("Contact", "ahmed.student@school.ae\n+971 50 123 4567", grey: true),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _profileRow(String title, String value, {bool bold = false, bool grey = false}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          value,
-          style: TextStyle(
-            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-            fontSize: 16,
-            color: grey ? Colors.blueGrey[600] : Colors.black,
-            height: 1.33,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _DocumentsListCard extends StatelessWidget {
-  final List<Map<String, dynamic>> docs = const [
+  final List<Map<String, String>> documents = const [
     {
-      "name": "Birth Certificate.pdf",
+      "name": "birth certificate",
       "type": "Official Document",
-      "date": "2023-08-15",
-      "status": "Verified",
-      "icon": Icons.insert_drive_file_outlined,
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
     },
     {
-      "name": "Previous School Report.pdf",
-      "type": "Academic Record",
-      "date": "2023-08-20",
-      "status": "Pending",
-      "icon": Icons.insert_drive_file_outlined,
+      "name": "passport",
+      "type": "Official Document",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
     },
     {
-      "name": "Medical Record.pdf",
-      "type": "Health Record",
-      "date": "2023-09-01",
-      "status": "Verified",
-      "icon": Icons.insert_drive_file_outlined,
+      "name": "identity card",
+      "type": "Official Document",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
+    },
+    {
+      "name": "personal photo",
+      "type": "Official Document",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
+    },
+    {
+      "name": "transfer paper",
+      "type": "Official Document",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
+    },
+    {
+      "name": "last certified degree",
+      "type": "Official Document",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
+    },
+    {
+      "name": "disease free",
+      "type": "Official Document",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
+    },
+    {
+      "name": "Vaccine 1",
+      "type": "Medical Record",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
+    },
+    {
+      "name": "Vaccine 2",
+      "type": "Medical Record",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
+    },
+    {
+      "name": "Family Book 1",
+      "type": "Official Document",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
+    },
+    {
+      "name": "Family Book 2",
+      "type": "Official Document",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
+    },
+    {
+      "name": "Extra File (1) - 1",
+      "type": "Uploaded Resource",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
+    },
+    {
+      "name": "Extra File (1) - 2",
+      "type": "Uploaded Resource",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
+    },
+    {
+      "name": "Extra File (2) - 1",
+      "type": "Uploaded Resource",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
+    },
+    {
+      "name": "Extra File (3) - 1",
+      "type": "Uploaded Resource",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
+    },
+    {
+      "name": "Extra File (3) - 3",
+      "type": "Uploaded Resource",
+      "date": "2025-12-29",
+      "status": "studentFile.approved",
     },
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 18),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 26),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Documents List",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
-            const SizedBox(height: 2),
-            const Text(
-              "View and manage your uploaded documents.",
-              style: TextStyle(color: Colors.grey, fontSize: 15),
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    return Scaffold(
+      appBar: const StudentAppBar(),
+      drawer: const StudentDrawer(),
+      backgroundColor: const Color(0xFFF6F8FB),
+      bottomNavigationBar: NavigationBarPrimary(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? 5 : 30,
+              vertical: isMobile ? 6 : 20,
             ),
-            const SizedBox(height: 16),
-            // Table Head
-            Row(
-              children: const [
-                Expanded(flex: 4, child: Text("Document Name", style: _thStyle)),
-                Expanded(flex: 3, child: Text("Type", style: _thStyle)),
-                Expanded(flex: 2, child: Text("Date", style: _thStyle)),
-                Expanded(flex: 2, child: Text("Status", style: _thStyle)),
-                SizedBox(width: 28),
-              ],
-            ),
-            const Divider(height: 18, color: Color(0xFFE6E8EB), thickness: 1.2),
-            // Table Rows
-            ...docs.map((doc) => _docRow(context, doc)).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _docRow(BuildContext context, Map<String, dynamic> doc) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 7.5),
-      child: Row(
-        children: [
-          // Document Name
-          Expanded(
-            flex: 4,
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(doc["icon"], size: 20, color: Colors.grey[700]),
-                const SizedBox(width: 5),
-                Text(
-                  doc["name"],
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
+                // الصندوق الرئيسي
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.10),
+                        blurRadius: 14,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 8 : 28,
+                    vertical: isMobile ? 10 : 18,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // العنوان الرئيسي مع الزر
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "Student File",
+                              style: TextStyle(
+                                fontSize: isMobile ? 25 : 36,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF14283A),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: isMobile ? 35 : 44,
+                            child: ElevatedButton.icon(
+                              icon: const Icon(
+                                Icons.upload,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                              label: const Text(
+                                "Upload Document",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF132439),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 0,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                elevation: 0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        "Manage your official documents and records.",
+                        style: TextStyle(
+                          fontSize: isMobile ? 11 : 14,
+                          color: Colors.blueGrey.shade400,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // الصندوق الخاص بالجدول وعنوانه
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.11),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.06),
+                              blurRadius: 7,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 8 : 18,
+                          vertical: isMobile ? 10 : 15,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // عنوان القائمة
+                            Text(
+                              "Documents List",
+                              style: TextStyle(
+                                fontSize: isMobile ? 15 : 19,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF14283A),
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              "View and manage your uploaded documents.",
+                              style: TextStyle(
+                                fontSize: isMobile ? 10 : 12,
+                                color: Colors.blueGrey.shade400,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            // الجدول
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Column(
+                                children: [
+                                  // رأس الجدول
+                                  Row(
+                                    children: [
+                                      _headerCell(
+                                        "Document Name",
+                                        width: 120,
+                                        isMobile: isMobile,
+                                      ),
+                                      _headerCell(
+                                        "Type",
+                                        width: 100,
+                                        isMobile: isMobile,
+                                      ),
+                                      _headerCell(
+                                        "Date",
+                                        width: 80,
+                                        isMobile: isMobile,
+                                      ),
+                                      _headerCell(
+                                        "Status",
+                                        width: 95,
+                                        isMobile: isMobile,
+                                      ),
+                                      _headerCell(
+                                        "",
+                                        width: 62,
+                                        isMobile: isMobile,
+                                      ),
+                                    ],
+                                  ),
+                                  // العناصر (الصفوف)
+                                  ...documents.map(
+                                    (doc) => Row(
+                                      children: [
+                                        _rowCell(
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.description_outlined,
+                                                size: 15,
+                                                color: Colors.blueGrey[300],
+                                              ),
+                                              const SizedBox(width: 5),
+                                              SizedBox(
+                                                width: 70,
+                                                child: Text(
+                                                  doc['name']!,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: isMobile
+                                                        ? 11.3
+                                                        : 13.5,
+                                                    color: const Color(
+                                                      0xFF1F2937,
+                                                    ),
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          width: 120,
+                                        ),
+                                        _rowCell(
+                                          Text(
+                                            doc['type']!,
+                                            style: TextStyle(
+                                              fontSize: isMobile ? 10 : 12,
+                                              color: Colors.blueGrey[600],
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          width: 100,
+                                        ),
+                                        _rowCell(
+                                          Text(
+                                            doc['date']!,
+                                            style: TextStyle(
+                                              fontSize: isMobile ? 10 : 12,
+                                              color: Colors.blueGrey[500],
+                                            ),
+                                          ),
+                                          width: 80,
+                                        ),
+                                        _rowCell(
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.green.withOpacity(
+                                                0.14,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 5,
+                                              vertical: 2,
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.verified,
+                                                  color: Colors.green,
+                                                  size: 12,
+                                                ),
+                                                const SizedBox(width: 1),
+                                                SizedBox(
+                                                  width: 49,
+                                                  child: Text(
+                                                    doc['status']!,
+                                                    style: TextStyle(
+                                                      fontSize: isMobile
+                                                          ? 8.5
+                                                          : 10.5,
+                                                      color: Colors.green[700],
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          width: 95,
+                                        ),
+                                        _rowCell(
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              SizedBox(
+                                                width: 26,
+                                                child: IconButton(
+                                                  icon: const Icon(
+                                                    Icons.remove_red_eye,
+                                                    size: 15,
+                                                  ),
+                                                  color: Colors.blueGrey[400],
+                                                  padding: EdgeInsets.zero,
+                                                  constraints:
+                                                      const BoxConstraints(),
+                                                  onPressed: () {},
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 26,
+                                                child: IconButton(
+                                                  icon: const Icon(
+                                                    Icons.download_rounded,
+                                                    size: 15,
+                                                  ),
+                                                  color: Colors.blueGrey[600],
+                                                  padding: EdgeInsets.zero,
+                                                  constraints:
+                                                      const BoxConstraints(),
+                                                  onPressed: () {},
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          width: 62,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(height: 24),
               ],
             ),
           ),
-          // Type
-          Expanded(
-            flex: 3,
-            child: Text(doc["type"], style: const TextStyle(fontSize: 14)),
-          ),
-          // Date
-          Expanded(
-            flex: 2,
-            child: Text(doc["date"], style: const TextStyle(fontSize: 14)),
-          ),
-          // Status
-          Expanded(
-            flex: 2,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: _statusBadge(doc["status"]),
-            ),
-          ),
-          // View Icon
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.remove_red_eye_outlined, color: Colors.grey, size: 20),
-            tooltip: "View",
-          ),
-          // Delete Icon
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
-            tooltip: "Delete",
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _statusBadge(String status) {
-    if (status == "Verified") {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 4),
-        decoration: BoxDecoration(
-          color: const Color(0xFF36C268).withOpacity(.15),
-          borderRadius: BorderRadius.circular(13),
+  Widget _headerCell(
+    String text, {
+    required double width,
+    required bool isMobile,
+  }) {
+    return SizedBox(
+      width: width,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontWeight: FontWeight.w800,
+          fontSize: isMobile ? 11 : 13,
+          color: const Color(0xFF263442),
         ),
-        child: const Text(
-          "Verified",
-          style: TextStyle(
-              color: Color(0xFF24A043),
-              fontSize: 13.5,
-              fontWeight: FontWeight.bold),
-        ),
-      );
-    }
-    if (status == "Pending") {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 4),
-        decoration: BoxDecoration(
-          color: const Color(0xFFB5BFE2).withOpacity(.15),
-          borderRadius: BorderRadius.circular(13),
-        ),
-        child: const Text(
-          "Pending",
-          style: TextStyle(
-              color: Color(0xFF53627C),
-              fontSize: 13.5,
-              fontWeight: FontWeight.bold),
-        ),
-      );
-    }
-    return const SizedBox();
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  Widget _rowCell(Widget child, {required double width}) {
+    return SizedBox(width: width, child: child);
   }
 }
-
-const _thStyle = TextStyle(
-  fontWeight: FontWeight.bold,
-  color: Colors.black87,
-  fontSize: 14.5,
-);
