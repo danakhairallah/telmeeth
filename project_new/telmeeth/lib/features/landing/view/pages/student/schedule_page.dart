@@ -13,105 +13,253 @@ class SchedulePage extends StatefulWidget {
 class _SchedulePageState extends State<SchedulePage> {
   final List<Map<String, dynamic>> schedules = [];
 
-  void _showAddEventDialog() {
-    String eventTitle = '';
-    String eventDay = '';
-    String eventTime = '';
+  Future<void> _showAddScheduleDialog(BuildContext context) async {
+    String taskName = '';
+    String? selectedDay;
+    String status = 'pending';
+    TimeOfDay? startTime;
+    TimeOfDay? endTime;
+    String? description = '';
 
-    showDialog(
+    final days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+
+    final statuses = [
+      'pending',
+      'in progress',
+      'completed',
+      'cancelled',
+    ];
+
+    Map<String, dynamic>? result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        title: const Text(
-          'Add New Schedule',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Fill in the details to create a new schedule event.',
-                style: TextStyle(fontSize: 11, color: Color(0xFF6C7A87))),
-            const SizedBox(height: 11),
-            const Text('Task *',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-            const SizedBox(height: 4),
-            TextField(
-              autofocus: true,
-              onChanged: (val) => eventTitle = val,
-              decoration: InputDecoration(
-                hintText: 'Enter task name',
-                hintStyle: const TextStyle(fontSize: 12, color: Color(0xFFb8c2ca)),
-                contentPadding: const EdgeInsets.all(8),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(7),
-                ),
-                filled: true,
-                fillColor: Colors.white.withOpacity(0.96),
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text('Day *',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-            const SizedBox(height: 4),
-            TextField(
-              onChanged: (val) => eventDay = val,
-              decoration: InputDecoration(
-                hintText: 'e.g. Tuesday',
-                hintStyle: const TextStyle(fontSize: 12, color: Color(0xFFb8c2ca)),
-                contentPadding: const EdgeInsets.all(8),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(7),
-                ),
-                filled: true,
-                fillColor: Colors.white.withOpacity(0.96),
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text('Time *',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-            const SizedBox(height: 4),
-            TextField(
-              onChanged: (val) => eventTime = val,
-              decoration: InputDecoration(
-                hintText: 'e.g. 10:00 - 11:00',
-                hintStyle: const TextStyle(fontSize: 12, color: Color(0xFFb8c2ca)),
-                contentPadding: const EdgeInsets.all(8),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(7),
-                ),
-                filled: true,
-                fillColor: Colors.white.withOpacity(0.96),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            child: const Text('Cancel', style: TextStyle(fontSize: 12)),
-            onPressed: () => Navigator.pop(ctx),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFA962),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            ),
-            onPressed: () {
-              if (eventTitle.trim().isNotEmpty && eventDay.trim().isNotEmpty && eventTime.trim().isNotEmpty) {
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            // اختر الوقت
+            Future<void> pickStartTime() async {
+              final picked = await showTimePicker(
+                context: context,
+                initialTime: TimeOfDay.now(),
+              );
+              if (picked != null) {
                 setState(() {
-                  schedules.insert(0, {
-                    'title': eventTitle.trim(),
-                    'day': eventDay.trim(),
-                    'time': eventTime.trim(),
-                  });
+                  startTime = picked;
+                  if (endTime != null) {
+                    if (picked.hour > endTime!.hour || (picked.hour == endTime!.hour && picked.minute >= endTime!.minute)) {
+                      endTime = null;
+                    }
+                  }
                 });
-                Navigator.pop(ctx);
               }
-            },
-            child: const Text('Create', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-          ),
+            }
+
+            Future<void> pickEndTime() async {
+              final picked = await showTimePicker(
+                context: context,
+                initialTime: startTime ?? TimeOfDay.now(),
+              );
+              if (picked != null) {
+                setState(() {
+                  endTime = picked;
+                });
+              }
+            }
+
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+              titlePadding: const EdgeInsets.fromLTRB(18, 16, 18, 6),
+              contentPadding: const EdgeInsets.fromLTRB(18, 0, 18, 12),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Add New Schedule',
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 20),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Fill in the details to create a new schedule event.',
+                      style: TextStyle(fontSize: 11, color: Color(0xFF6C7A87)),
+                    ),
+                    const SizedBox(height: 14),
+                    const Text('Task *', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 4),
+                    TextField(
+                      onChanged: (v) => taskName = v,
+                      decoration: InputDecoration(
+                        hintText: 'Enter task name',
+                        hintStyle: const TextStyle(fontSize: 11.5, color: Color(0xFFB8C2CA)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    const Text('Day *', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 4),
+                    DropdownButtonFormField<String>(
+                      value: selectedDay,
+                      items: days.map(
+                            (d) => DropdownMenuItem(value: d, child: Text(d, style: const TextStyle(fontSize: 12))),
+                      ).toList(),
+                      onChanged: (v) => setState(() => selectedDay = v),
+                      decoration: InputDecoration(
+                        hintText: 'Select a day',
+                        hintStyle: const TextStyle(fontSize: 11.5, color: Color(0xFFB8C2CA)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Start Time *', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 4),
+                              InkWell(
+                                onTap: () => pickStartTime(),
+                                child: _timeBox(startTime != null ? startTime!.format(context) : '--:--'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('End Time *', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 4),
+                              InkWell(
+                                onTap: startTime == null ? null : () => pickEndTime(),
+                                child: AbsorbPointer(
+                                  absorbing: startTime == null,
+                                  child: _timeBox(
+                                    endTime != null ? endTime!.format(context) : '--:--',
+                                    disabled: startTime == null,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    const Text('Status', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 4),
+                    DropdownButtonFormField<String>(
+                      value: status,
+                      items: statuses.map(
+                            (s) => DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 12))),
+                      ).toList(),
+                      onChanged: (v) => setState(() => status = v!),
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    const Text('Description', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 4),
+                    TextField(
+                      minLines: 3,
+                      maxLines: 4,
+                      onChanged: (v) => description = v,
+                      decoration: InputDecoration(
+                        hintText: 'Add any additional details...',
+                        hintStyle: const TextStyle(fontSize: 11.5, color: Color(0xFFB8C2CA)),
+                        contentPadding: const EdgeInsets.all(10),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actionsPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel', style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFA962),
+                    padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: () {
+                    if (taskName.trim().isEmpty ||
+                        selectedDay == null ||
+                        startTime == null ||
+                        endTime == null) {
+                      // ممكن تنبيه هنا
+                      return;
+                    }
+                    // رجّع الداتا للصفحة الرئيسية
+                    Navigator.pop(ctx, {
+                      'title': taskName.trim(),
+                      'day': selectedDay,
+                      'status': status,
+                      'time': "${startTime!.format(context)} - ${endTime!.format(context)}",
+                      'description': description,
+                    });
+                  },
+                  child: const Text(
+                    'Create',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (result != null) {
+      setState(() {
+        schedules.insert(0, result);
+      });
+    }
+  }
+
+  Widget _timeBox(String text, {bool disabled = false}) {
+    return Container(
+      height: 28,
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      decoration: BoxDecoration(
+        color: disabled ? Colors.grey[200] : Colors.white,
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(text, style: TextStyle(fontSize: 12, color: disabled ? const Color(0xFFCBD5E1) : const Color(0xFF334155))),
+          const Icon(Icons.access_time, size: 16),
         ],
       ),
     );
@@ -130,7 +278,6 @@ class _SchedulePageState extends State<SchedulePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Card + Add Event
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(horizontal: isMobile ? 14 : 22, vertical: isMobile ? 12 : 18),
@@ -149,7 +296,6 @@ class _SchedulePageState extends State<SchedulePage> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Left: Title & description
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,7 +320,6 @@ class _SchedulePageState extends State<SchedulePage> {
                         ],
                       ),
                     ),
-                    // Right: Add Event Button
                     SizedBox(
                       height: isMobile ? 30 : 39,
                       child: ElevatedButton(
@@ -184,7 +329,7 @@ class _SchedulePageState extends State<SchedulePage> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           elevation: 0,
                         ),
-                        onPressed: _showAddEventDialog,
+                        onPressed: () => _showAddScheduleDialog(context),
                         child: Row(
                           children: [
                             const Icon(Icons.add, color: Colors.white, size: 15),
@@ -204,47 +349,6 @@ class _SchedulePageState extends State<SchedulePage> {
                   ],
                 ),
               ),
-              // Scheduled Events Count
-              Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: isMobile ? 15 : 20, horizontal: isMobile ? 12 : 22),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.09),
-                              blurRadius: 7,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Total Events", style: TextStyle(fontSize: isMobile ? 11 : 13, color: Colors.blueGrey[700], fontWeight: FontWeight.w700)),
-                            const SizedBox(height: 4),
-                            Text(
-                              schedules.length.toString(),
-                              style: TextStyle(
-                                color: const Color(0xFFf59e42),
-                                fontSize: isMobile ? 23 : 31,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Schedule List Box
               Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 20),
@@ -305,18 +409,45 @@ class _SchedulePageState extends State<SchedulePage> {
                                     ),
                                   ),
                                   const SizedBox(height: 3),
-                                  Text(
-                                    'Day: ${entry.value['day']}',
-                                    style: TextStyle(
-                                      fontSize: isMobile ? 11 : 13,
-                                      color: Colors.blueGrey[700],
-                                    ),
+                                  Row(
+                                    children: [
+                                      Text('Day: ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: isMobile ? 11 : 13)),
+                                      Text(entry.value['day'], style: TextStyle(fontSize: isMobile ? 11 : 13, color: Colors.blueGrey[700])),
+                                    ],
                                   ),
-                                  Text(
-                                    'Time: ${entry.value['time']}',
-                                    style: TextStyle(
-                                      fontSize: isMobile ? 11 : 13,
-                                      color: Colors.blueGrey[700],
+                                  Row(
+                                    children: [
+                                      Text('Time: ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: isMobile ? 11 : 13)),
+                                      Text(entry.value['time'], style: TextStyle(fontSize: isMobile ? 11 : 13, color: Colors.blueGrey[700])),
+                                    ],
+                                  ),
+                                  if (entry.value['description'] != null && (entry.value['description'] as String).trim().isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 5),
+                                      child: Text(entry.value['description'],
+                                        style: TextStyle(fontSize: isMobile ? 11 : 13, color: const Color(0xFF5B5B5B)),
+                                      ),
+                                    ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 6.0),
+                                    child: Row(
+                                      children: [
+                                        Text('Status: ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: isMobile ? 11 : 13)),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFFFEAD1),
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                          child: Text(
+                                            entry.value['status'],
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: isMobile ? 10 : 12,
+                                                color: const Color(0xFFB86412)),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
