@@ -112,7 +112,7 @@ class _ContactSectionState extends State<ContactSection> {
                         children: [
                           // فورم
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 18, 10, 10),
+                            padding: const EdgeInsets.fromLTRB(20, 28, 20, 20),
                             child: SingleChildScrollView(
                               child: _ContactForm(isMobile: isMobile),
                             ),
