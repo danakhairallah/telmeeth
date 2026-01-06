@@ -1,0 +1,42 @@
+import 'package:flutter/foundation.dart';
+import 'package:telmeeth/core/api/model/request/update_profile_requect.dart';
+import 'package:telmeeth/core/api/model/response/profile_model.dart';
+import 'package:telmeeth/core/api/student/services/profile_services.dart';
+
+class ProfileController with ChangeNotifier{
+  ProfileServices _services = ProfileServices();
+
+  ProfileModel? profileModel;
+  bool isLoading = false;
+
+  Future<void> getStudentProfile() async {
+    isLoading = true;
+    notifyListeners();
+
+    profileModel = await _services.getStudentProfile();
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> updateProfile(UpdateProfileRequest request) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final updatedProfile = await _services.updateProfile(request);
+      if (updatedProfile != null) {
+        profileModel = updatedProfile;
+        notifyListeners();
+      } else {
+        print("Profile update failed");
+      }
+    } catch (e) {
+      print("Update Profile Error: $e");
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+}

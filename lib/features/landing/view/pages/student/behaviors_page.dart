@@ -1,0 +1,24 @@
+import 'package:flutter/material.dart';
+import 'package:telmeeth/core/constants/responsive.dart';
+
+import '../../../../../core/widgets/student/drawer.dart';
+import '../../../../../core/widgets/student/navigation.dart';
+import '../../../../../core/widgets/student/student_app_bar.dart';
+
+class Behaviors extends StatelessWidget {
+  const Behaviors({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: StudentAppBar(),
+      drawer: AppDrawer(),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(context.h(0.8)),
+          child: NavigationBarPrimary(),
+        ),
+      ),
+    );
+  }
+}
