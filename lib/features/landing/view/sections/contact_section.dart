@@ -113,7 +113,7 @@ class _ContactSectionState extends State<ContactSection> {
                         children: [
                           // فورم
                           Padding(
-                            padding: EdgeInsets.fromLTRB(context.w(2.4), context.h(1.9), context.w(2.4), context.h(1)),
+                            padding: EdgeInsets.fromLTRB(context.w(5.4), context.h(4), context.w(5.4), context.h(4)),
                             child: SingleChildScrollView(
                               child: _ContactForm(isMobile: isMobile),
                             ),
@@ -180,7 +180,7 @@ class _ContactFormState extends State<_ContactForm> {
                 onUnfocus: _onUnfocus,
               ),
             ),
-            SizedBox(width: isMobile ? context.w(2.4) : context.w(4.3)),
+            SizedBox(width: isMobile ? context.w(10.4) : context.w(4.3)),
             Expanded(
               child: _ContactTextField(
                 label: 'Email *',

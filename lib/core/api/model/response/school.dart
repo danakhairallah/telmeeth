@@ -15,18 +15,18 @@ class School {
 
   School(
       {this.id,
-      this.nameAr,
-      this.nameEn,
-      this.maxBranches,
-      this.maxTeachers,
-      this.maxStudents,
-      this.phoneNumber,
-      this.altPhoneNumber,
-      this.email,
-      this.logo,
-      this.curriculumId,
-      this.createdAt,
-      this.updatedAt});
+        this.nameAr,
+        this.nameEn,
+        this.maxBranches,
+        this.maxTeachers,
+        this.maxStudents,
+        this.phoneNumber,
+        this.altPhoneNumber,
+        this.email,
+        this.logo,
+        this.curriculumId,
+        this.createdAt,
+        this.updatedAt});
 
   School.fromJson(Map<String, dynamic> json) {
     id = json['id'];

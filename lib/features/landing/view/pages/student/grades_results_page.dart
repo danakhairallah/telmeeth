@@ -1,21 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:telmeeth/core/api/controllers/average_controller.dart';
+import 'package:telmeeth/core/api/controllers/mark_controller.dart';
+import 'package:telmeeth/core/api/controllers/score_controller.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/container.dart';
 import 'package:telmeeth/core/widgets/student/custom_container1.dart';
 import 'package:telmeeth/core/widgets/student/score&grade.dart';
+import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 
 import '../../../../../core/widgets/student/drawer.dart';
 import '../../../../../core/widgets/student/navigation.dart';
 import '../../../../../core/widgets/student/student_app_bar.dart';
 
-class GradesResults extends StatelessWidget {
+class GradesResults extends StatefulWidget {
   const GradesResults({super.key});
 
   @override
+  State<GradesResults> createState() => _GradesResultsState();
+}
+
+class _GradesResultsState extends State<GradesResults> {
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      context.read<ScoreController>().getScore();
+      context.read<MarksController>().getMarks();
+      context.read<AverageController>().getAverage();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final averageCtrl = context.watch<AverageController>();
+    final marksCtrl = context.watch<MarksController>();
+
     return Scaffold(
-      appBar: StudentAppBar(),
-      drawer: AppDrawer(),
+      appBar: StudentFeaturesAppBar(),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(context.w(4)),
@@ -31,7 +54,10 @@ class GradesResults extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: context.h(2),),
+
+                SizedBox(height: context.h(2)),
+
+                /// ===== Average + Total Marks =====
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -44,20 +70,25 @@ class GradesResults extends StatelessWidget {
                           Text(
                             'Overall Average',
                             style: TextStyle(
-                              color: Colors.black,
                               fontWeight: FontWeight.bold,
                               fontSize: context.w(4),
                             ),
                           ),
                           SizedBox(height: context.h(1)),
                           Text(
-                            '0.0%',
-                            style: TextStyle(fontWeight: FontWeight.bold , fontSize: context.w(4.5) , color: Colors.orange),
+                            averageCtrl.isLoading
+                                ? "..."
+                                : "${averageCtrl.averagModel?.data?.length ?? 0}%",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: context.w(4.5),
+                              color: Colors.orange,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    //SizedBox(width: 10,),
+
                     FilterContainer(
                       width: context.w(45),
                       height: context.h(15),
@@ -67,32 +98,34 @@ class GradesResults extends StatelessWidget {
                           Text(
                             'Total Score',
                             style: TextStyle(
-                              color: Colors.black,
                               fontWeight: FontWeight.bold,
                               fontSize: context.w(4),
                             ),
                           ),
                           SizedBox(height: context.h(1)),
                           Text(
-                            '8',
-                            style: TextStyle(fontWeight: FontWeight.bold , fontSize: context.w(4.5) , color: Colors.orange),
+                            marksCtrl.isLoading
+                                ? "..."
+                                : "${marksCtrl.marks?.data?.length ?? 0}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: context.w(4.5),
+                              color: Colors.orange,
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: context.h(1.5),),
-                MarksScoresPage()
+
+                SizedBox(height: context.h(1.5)),
+
+                /// ===== Tabs (Scores / Marks) =====
+                const MarksScoresPage(),
               ],
             ),
           ),
-          ),
-          ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(context.h(0.8),),
-          child: NavigationBarPrimary(),
         ),
       ),
     );

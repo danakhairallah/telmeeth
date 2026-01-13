@@ -11,12 +11,12 @@ class GradeSection {
 
   GradeSection(
       {this.id,
-      this.gradeId,
-      this.sectionId,
-      this.createdAt,
-      this.updatedAt,
-      this.grade,
-      this.section});
+        this.gradeId,
+        this.sectionId,
+        this.createdAt,
+        this.updatedAt,
+        this.grade,
+        this.section});
 
   GradeSection.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -26,7 +26,7 @@ class GradeSection {
     updatedAt = json['updated_at'];
     grade = json['grade'] != null ? new Grade.fromJson(json['grade']) : null;
     section =
-        json['section'] != null ? new Grade.fromJson(json['section']) : null;
+    json['section'] != null ? new Grade.fromJson(json['section']) : null;
   }
 
   Map<String, dynamic> toJson() {

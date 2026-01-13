@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
-import '../../../../../core/widgets/student/drawer.dart';
-import '../../../../../core/widgets/student/navigation.dart';
-import '../../../../../core/widgets/student/student_app_bar.dart';
+import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 
 class Messages extends StatefulWidget {
   const Messages({super.key});
@@ -15,7 +13,6 @@ class _MessagesState extends State<Messages> {
   int mainTabIndex = 0;
   int sideTabIndex = 0;
   bool showNewConversationDialog = false;
-
 
   List<Map<String, String>> parentsMessages = [
     {
@@ -31,10 +28,8 @@ class _MessagesState extends State<Messages> {
     final isMobile = width < 750;
 
     return Scaffold(
-      appBar: const StudentAppBar(),
-      drawer: const AppDrawer(),
+      appBar: const StudentFeaturesAppBar(),
       backgroundColor: const Color(0xFFF7F8F9),
-      bottomNavigationBar: NavigationBarPrimary(),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: context.w(1.4), vertical: context.h(0.8)),
@@ -99,7 +94,7 @@ class _MessagesState extends State<Messages> {
               ),
               Expanded(
                 child: isMobile
-                    ? _mobileLayout(context)
+                    ? _desktopLayout(context)
                     : _desktopLayout(context),
               ),
             ],
@@ -115,8 +110,8 @@ class _MessagesState extends State<Messages> {
       children: [
         if (mainTabIndex == 0)
           Container(
-            width: context.w(83.9) ,
-            padding: EdgeInsets.symmetric(vertical: context.h(0.2)),
+            width: context.w(84),
+            padding: EdgeInsets.symmetric(vertical: context.h(0.6)),
             child: Column(
               children: [
                 Stack(
@@ -221,23 +216,15 @@ class _MessagesState extends State<Messages> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(
-                    top: context.h(0.5),
-                    bottom: context.h(0.5),
-                    left: context.w(1.2),
-                    right: context.w(1.2),
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: context.h(1)),
                   child: Divider(
-                    thickness: context.h(0.1),
+                    thickness: context.h(0.14),
                     color: Color(0xFFEAEAEA),
-                    height: context.h(0.2),
+                    height: 0,
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: 0,
-                    vertical: context.h(0.2),
-                  ),
+                  margin: EdgeInsets.symmetric(vertical: context.h(0.4)),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF6F8FB),
                     borderRadius: BorderRadius.circular(context.h(0.8)),
@@ -265,75 +252,79 @@ class _MessagesState extends State<Messages> {
                     ],
                   ),
                 ),
-                SizedBox(height: context.h(1)),
+                SizedBox(height: context.h(1.2)),
                 Expanded(
-                  child: sideTabIndex == 0
-                      ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.send_rounded,
-                          color: Colors.grey[300],
-                          size: context.w(9.4),
-                        ),
-                        SizedBox(height: context.h(0.8)),
-                        Flexible(
+                  child: Builder(
+                    builder: (_) {
+                      if (sideTabIndex == 0) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.send_rounded,
+                                color: Colors.grey[300],
+                                size: context.w(9.4),
+                              ),
+                              SizedBox(height: context.h(0.8)),
+                              Flexible(
+                                child: Text(
+                                  "Select a conversation to start messaging",
+                                  style: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: context.w(3.1),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      } else if (sideTabIndex == 1) {
+                        return Center(
                           child: Text(
-                            "Select a conversation to start messaging",
+                            "No sent messages yet.",
                             style: TextStyle(
                               color: Colors.grey[400],
                               fontSize: context.w(3.1),
+                              fontWeight: FontWeight.w500,
                             ),
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                      : sideTabIndex == 1
-                      ? Center(
-                    child: Text(
-                      "No messages found",
-                      style: TextStyle(
-                        color: Colors.grey[400],
-                        fontSize: context.w(3.1),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  )
-                      : Center(
-                    child: Text(
-                      "No sent messages yet",
-                      style: TextStyle(
-                        color: Colors.grey[400],
-                        fontSize: context.w(3.1),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                        );
+                      } else if (sideTabIndex == 2) {
+                        return Center(
+                          child: Text(
+                            "No messages found.",
+                            style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: context.w(3.1),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        );
+                      }
+                      return SizedBox.shrink();
+                    },
                   ),
                 ),
               ],
             ),
           ),
-        // Main Area
         Expanded(
           child: Builder(
             builder: (_) {
-              if (mainTabIndex == 0) {
-                if (sideTabIndex == 2) {
-                  return const SizedBox.shrink();
-                }
+              if (mainTabIndex == 0 && sideTabIndex == 2) {
+                return const SizedBox.shrink();
               } else if (mainTabIndex == 1) {
                 final msg = parentsMessages.first;
                 return Align(
                   alignment: Alignment.topLeft,
                   child: Container(
                     width: context.w(85.1),
-                    height: context.h(9.8),
+                    height: context.h(10),
                     padding: EdgeInsets.symmetric(
-                      vertical: context.h(1),
+                      vertical: context.h(1.6),
                       horizontal: context.w(3.1),
                     ),
                     decoration: BoxDecoration(
@@ -341,7 +332,7 @@ class _MessagesState extends State<Messages> {
                       borderRadius: BorderRadius.circular(context.h(1.3)),
                       border: Border.all(
                         color: const Color(0xFFFFE9F1),
-                        width: context.w(0.2),
+                        width: context.w(0.18),
                       ),
                       boxShadow: [
                         BoxShadow(
@@ -384,7 +375,7 @@ class _MessagesState extends State<Messages> {
                                   color: Colors.grey[400],
                                 ),
                               ),
-                              SizedBox(height: context.h(0.3)),
+                              SizedBox(height: context.h(0.5)),
                               Text(
                                 msg["content"]!,
                                 style: TextStyle(fontSize: context.w(2.9)),
@@ -406,7 +397,7 @@ class _MessagesState extends State<Messages> {
                         color: Colors.grey[350],
                         size: context.w(6.3),
                       ),
-                      SizedBox(height: context.h(0.9)),
+                      SizedBox(height: context.h(1.1)),
                       Text(
                         "No messages from teachers yet.",
                         style: TextStyle(
@@ -424,10 +415,6 @@ class _MessagesState extends State<Messages> {
         ),
       ],
     );
-  }
-
-  Widget _mobileLayout(BuildContext context) {
-    return _desktopLayout(context);
   }
 
   Widget _tabButton({
@@ -517,12 +504,12 @@ class _MessagesState extends State<Messages> {
     );
   }
 }
+
 Widget _newConversationDialog(BuildContext context) {
   String? selectedType;
   final List<String> recipientTypes = [
     'Student', 'Teacher', 'Admin', 'ParentModel'
   ];
-
   return StatefulBuilder(
     builder: (context, setState) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(context.h(1.4))),

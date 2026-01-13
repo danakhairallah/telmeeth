@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:telmeeth/features/landing/view/pages/student/task_details_page.dart';
 import '../../../../../core/constants/responsive.dart';
 import '../../../../../core/widgets/student/container.dart';
 import '../../../../../core/widgets/student/custom_container1.dart';
-import '../../../../../core/widgets/student/drawer.dart';
-import '../../../../../core/widgets/student/navigation.dart';
-import '../../../../../core/widgets/student/student_app_bar.dart';
+import '../../../../../core/widgets/student/student_features_app_bar.dart';
 
 class Tasks extends StatefulWidget {
   const Tasks({super.key});
@@ -28,7 +27,6 @@ class _TasksState extends State<Tasks> {
   }
 
   void fetchTasks() {
-    // 🔹 مثال بيانات (استبدليها بالـ API)
     allTasks = [
       {"id": 1, "title": "Math Quiz 1"},
       {"id": 2, "title": "Science Essay Assignment"},
@@ -61,8 +59,7 @@ class _TasksState extends State<Tasks> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: StudentAppBar(),
-      drawer: AppDrawer(),
+      appBar: StudentFeaturesAppBar(),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(context.w(4)),
@@ -70,7 +67,7 @@ class _TasksState extends State<Tasks> {
             child: Column(
               children: [
 
-                /// ===== كل التصميم الأصلي (بدون أي تغيير) =====
+                // الهيدر (كما هو)
                 CustomContainer(
                   backgroundColor: const Color(0xFFF39F5F),
                   child: Row(
@@ -129,7 +126,7 @@ class _TasksState extends State<Tasks> {
 
                 SizedBox(height: context.h(1.6)),
 
-                /// ===== البوكسات الثلاثة (بدون تغيير) =====
+                // الفلاتر (كما هي)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -195,84 +192,107 @@ class _TasksState extends State<Tasks> {
 
                 SizedBox(height: context.h(1.6)),
 
-                /// ===== عرض التاسكات مع pagination =====
+                // ********** كروت التاسكات مع زر التفاصيل البرتقالي **********
                 ...pagedTasks.map((task) {
-                  return Column(
-                    children: [
-                      FilterContainer(
-                        width: MediaQuery.sizeOf(context).width,
-                        height: context.h(22),
-                        color: const Color(0xFFFEF2F2),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  task['title'],
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: context.w(4.2),
-                                  ),
-                                ),
-                                SizedBox(width: context.w(0.5)),
-                                IconButton(
-                                  icon: const Icon(Icons.close, color: Colors.red),
-                                  onPressed: () {},
-                                ),
-                              ],
-                            ),
-                          ],
+                  return Container(
+                    margin: EdgeInsets.only(bottom: context.h(1.7)),
+                    padding: EdgeInsets.symmetric(
+                      vertical: context.h(2),
+                      horizontal: context.w(4.2),
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF2F2),
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.orange.withOpacity(0.06),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
                         ),
-                      ),
-                      SizedBox(height: context.h(2)),
-                    ],
+                      ],
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Left: Title
+                        Expanded(
+                          child: Text(
+                            task['title'],
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: context.w(4.3),
+                              color: Colors.orange.shade800,
+                            ),
+                          ),
+                        ),
+                        // Right: Details Button (Orange)
+                        SizedBox(width: context.w(1.5)),
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFF39F5F),
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              vertical: context.h(1.1),
+                              horizontal: context.w(2.7),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0.8,
+                            textStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: context.w(3.2),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => TaskDetailsPage(taskId: task['id']),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.arrow_forward_ios_rounded, size: 17),
+                          label: const Text('Details'),
+                        ),
+                      ],
+                    ),
                   );
                 }),
 
-                /// ===== pagination دائري =====
+                // ********** Pagination Dots (رمادية وبرتقالية) **********
+                SizedBox(height: context.h(1.5)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(totalPages, (index) {
-                    final page = index + 1;
                     return GestureDetector(
-                      onTap: () => goToPage(page),
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: context.w(1)),
-                        width: context.w(8),
-                        height: context.w(8),
+                      onTap: () => goToPage(index + 1),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: EdgeInsets.symmetric(horizontal: context.w(1.1)),
+                        width: currentPage == (index + 1) ? context.w(5) : context.w(3.2),
+                        height: context.w(3.2),
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: currentPage == page
-                              ? Colors.blue
-                              : Colors.white,
-                          border: Border.all(color: Colors.blue),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '$page',
-                            style: TextStyle(
-                              color: currentPage == page
-                                  ? Colors.white
-                                  : Colors.blue,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          color: currentPage == (index + 1)
+                              ? const Color(0xFFF39F5F) // برتقالي للنقطة النشطة
+                              : Colors.grey.shade400,   // رمادي للنقاط العادية
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            if (currentPage == (index + 1))
+                              BoxShadow(
+                                color: Colors.orange.withOpacity(0.14),
+                                blurRadius: 7,
+                              )
+                          ],
                         ),
                       ),
                     );
                   }),
                 ),
-
                 SizedBox(height: context.h(2)),
               ],
             ),
           ),
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(context.h(0.8)),
-          child: NavigationBarPrimary(),
         ),
       ),
     );

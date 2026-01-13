@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 import '../../../../../core/constants/responsive.dart';
 import '../../../../../core/widgets/student/container.dart';
 import '../../../../../core/widgets/student/custom_container1.dart';
@@ -12,8 +13,7 @@ class LiveLessons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: StudentAppBar(),
-      drawer: AppDrawer(),
+      appBar: StudentFeaturesAppBar(),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(context.w(4)),
@@ -140,10 +140,6 @@ class LiveLessons extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: SafeArea(child: Padding(
-        padding: EdgeInsets.all(context.h(0.8)),
-        child: NavigationBarPrimary(),
-      )),
     );
   }
 }

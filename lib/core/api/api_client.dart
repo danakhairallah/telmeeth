@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiClient {
-  static const baseUrl = "http://api.be-academix.com/api";
+  static const baseUrl = "https://latestback-8dmb.onrender.com/api";
 
   static Future<Dio> getDio() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

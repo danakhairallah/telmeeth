@@ -16,17 +16,17 @@ class Branch {
 
   Branch(
       {this.id,
-      this.nameAr,
-      this.nameEn,
-      this.cityId,
-      this.schoolId,
-      this.phoneNumber,
-      this.email,
-      this.location,
-      this.address,
-      this.createdAt,
-      this.updatedAt,
-      this.school});
+        this.nameAr,
+        this.nameEn,
+        this.cityId,
+        this.schoolId,
+        this.phoneNumber,
+        this.email,
+        this.location,
+        this.address,
+        this.createdAt,
+        this.updatedAt,
+        this.school});
 
   Branch.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -41,7 +41,7 @@ class Branch {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     school =
-        json['school'] != null ? new School.fromJson(json['school']) : null;
+    json['school'] != null ? new School.fromJson(json['school']) : null;
   }
 
   Map<String, dynamic> toJson() {

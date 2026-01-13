@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/controllers/auth_controller.dart';
 import 'package:telmeeth/core/api/model/response/api_response.dart';
 import 'package:telmeeth/features/landing/view/pages/student/attendance_page.dart';
+import 'package:telmeeth/features/landing/view/pages/student/home_student.dart';
 import '../../../../../core/constants/responsive.dart';
 import '../../../../../core/widgets/student/app_primary_button.dart';
 import '../../../../../core/widgets/student/custom_textfiled.dart';
@@ -157,7 +158,7 @@ void loadRememberMe() async {
         print("Message: ${apiResponse.message}");
 
     if (apiResponse.statusCode == 200) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Attendance(),));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomeStudent(),));
     } else {
       print("//////////////// ${apiResponse.message}");
     }

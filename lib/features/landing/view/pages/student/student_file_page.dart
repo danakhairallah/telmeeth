@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/drawer.dart';
+import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 import '../../../../../core/widgets/student/navigation.dart';
 import '../../../../../core/widgets/student/student_app_bar.dart';
 
@@ -110,13 +111,8 @@ class StudentFilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
     return Scaffold(
-      appBar: StudentAppBar(),
-      drawer: AppDrawer(),
+      appBar: StudentFeaturesAppBar(),
       backgroundColor: const Color(0xFFF6F8FB),
-      bottomNavigationBar: SafeArea(child: Padding(
-        padding: EdgeInsets.all(context.w(1.9)),
-        child: NavigationBarPrimary(),
-      )),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

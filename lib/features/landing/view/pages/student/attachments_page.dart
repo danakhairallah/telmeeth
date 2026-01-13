@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
+import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 import '../../../../../core/widgets/student/drawer.dart';
 import '../../../../../core/widgets/student/navigation.dart';
 import '../../../../../core/widgets/student/student_app_bar.dart';
@@ -34,8 +35,7 @@ class _AttachmentsState extends State<Attachments> {
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
     return Scaffold(
-      appBar: const StudentAppBar(),
-      drawer: const AppDrawer(),
+      appBar: const StudentFeaturesAppBar(),
       backgroundColor: const Color(0xFFF6F2EC),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -267,7 +267,6 @@ class _AttachmentsState extends State<Attachments> {
           ),
         ),
       ),
-      bottomNavigationBar: const NavigationBarPrimary(),
     );
   }
 

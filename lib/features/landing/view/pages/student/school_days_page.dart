@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
-import 'package:telmeeth/core/widgets/student/drawer.dart';
-import '../../../../../core/widgets/student/navigation.dart';
-import '../../../../../core/widgets/student/student_app_bar.dart';
+import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 
 class SchoolDays extends StatelessWidget {
   const SchoolDays({super.key});
@@ -11,33 +9,34 @@ class SchoolDays extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final isMobile = width < 650;
-    final cardSpacing = isMobile ? context.h(0.7) : context.h(1.4);
+    final double boxSpacing = isMobile ? context.h(1.7) : context.h(2.7); // مسافة بين البوكسات
 
     return Scaffold(
-      appBar: const StudentAppBar(),
-      drawer: AppDrawer(),
+      appBar: const StudentFeaturesAppBar(),
       backgroundColor: const Color(0xFFF6F2EC),
-      bottomNavigationBar: SafeArea(child: Padding(
-        padding: EdgeInsets.all(context.w(4)),
-        child: NavigationBarPrimary(),
-      )),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: isMobile ? context.w(0.9) : context.w(4.3), vertical: isMobile ? context.h(0.5) : context.h(1.3)),
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? context.w(2.7) : context.w(5.8),
+            vertical: isMobile ? context.h(1.3) : context.h(2.1),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: isMobile ? context.w(2.4) : context.w(4.3), vertical: isMobile ? context.h(0.9) : context.h(1.4)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? context.w(3.5) : context.w(6.5),
+                  vertical: isMobile ? context.h(1.4) : context.h(2.5),
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(context.h(1.4)),
+                  borderRadius: BorderRadius.circular(context.h(1.7)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.10),
-                      blurRadius: 9,
+                      blurRadius: 12,
                       offset: const Offset(0, 2),
                     ),
                   ],
@@ -47,23 +46,23 @@ class SchoolDays extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.calendar_month, color: Color(0xFF345C8A), size: context.w(5.5)),
-                        SizedBox(width: context.w(1.7)),
+                        Icon(Icons.calendar_month, color: Color(0xFF345C8A), size: context.w(6)),
+                        SizedBox(width: context.w(2.2)),
                         Text(
                           "School Information",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: isMobile ? context.w(3.8) : context.w(5.5),
+                            fontSize: isMobile ? context.w(4.3) : context.w(6.2),
                             color: const Color(0xFF264566),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: context.h(0.3)),
+                    SizedBox(height: context.h(0.5)),
                     Text(
                       "View school schedule, working days, and attendance policies",
                       style: TextStyle(
-                        fontSize: isMobile ? context.w(2) : context.w(3.1),
+                        fontSize: isMobile ? context.w(2.6) : context.w(3.7),
                         color: Colors.blueGrey[400],
                         fontWeight: FontWeight.w500,
                       ),
@@ -71,76 +70,79 @@ class SchoolDays extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: isMobile ? context.h(0.6) : context.h(1.3)),
+              SizedBox(height: boxSpacing),
+
               // Stats Cards (Top)
               isMobile
                   ? Column(
                 children: [
                   Row(
                     children: [
-                      Expanded(child: _statCard("5", "Working Days", Icons.calendar_today, Color(0xFF17b26a), isMobile , context)),
-                      SizedBox(width: cardSpacing),
-                      Expanded(child: _statCard("2", "Weekend Days", Icons.celebration, Color(0xFFea580c), isMobile , context)),
+                      Expanded(child: _statCard("5", "Working Days", Icons.calendar_today, Color(0xFF17b26a), isMobile, context)),
+                      SizedBox(width: boxSpacing),
+                      Expanded(child: _statCard("2", "Weekend Days", Icons.celebration, Color(0xFFea580c), isMobile, context)),
                     ],
                   ),
-                  SizedBox(height: cardSpacing),
+                  SizedBox(height: boxSpacing),
                   Row(
                     children: [
-                      Expanded(child: _statCard("8", "Allowed Absences", Icons.warning_amber_rounded, Color(0xFFeab308), isMobile , context)),
-                      SizedBox(width: cardSpacing),
-                      Expanded(child: _statCard("9", "Allowed Lates", Icons.alarm, Color(0xFFa21caf), isMobile , context)),
+                      Expanded(child: _statCard("8", "Allowed Absences", Icons.warning_amber_rounded, Color(0xFFeab308), isMobile, context)),
+                      SizedBox(width: boxSpacing),
+                      Expanded(child: _statCard("9", "Allowed Lates", Icons.alarm, Color(0xFFa21caf), isMobile, context)),
                     ],
                   ),
                 ],
               )
                   : Row(
                 children: [
-                  Expanded(child: _statCard("5", "Working Days", Icons.calendar_today, Color(0xFF17b26a), isMobile , context)),
-                  SizedBox(width: cardSpacing),
-                  Expanded(child: _statCard("2", "Weekend Days", Icons.celebration, Color(0xFFea580c), isMobile , context)),
-                  SizedBox(width: cardSpacing),
-                  Expanded(child: _statCard("8", "Allowed Absences", Icons.warning_amber_rounded, Color(0xFFeab308), isMobile , context)),
-                  SizedBox(width: cardSpacing),
-                  Expanded(child: _statCard("9", "Allowed Lates", Icons.alarm, Color(0xFFa21caf), isMobile , context)),
+                  Expanded(child: _statCard("5", "Working Days", Icons.calendar_today, Color(0xFF17b26a), isMobile, context)),
+                  SizedBox(width: boxSpacing),
+                  Expanded(child: _statCard("2", "Weekend Days", Icons.celebration, Color(0xFFea580c), isMobile, context)),
+                  SizedBox(width: boxSpacing),
+                  Expanded(child: _statCard("8", "Allowed Absences", Icons.warning_amber_rounded, Color(0xFFeab308), isMobile, context)),
+                  SizedBox(width: boxSpacing),
+                  Expanded(child: _statCard("9", "Allowed Lates", Icons.alarm, Color(0xFFa21caf), isMobile, context)),
                 ],
               ),
-              SizedBox(height: isMobile ? context.h(0.7) : context.h(1.4)),
+              SizedBox(height: boxSpacing),
+
               // School Timings & Attendance Policy
               isMobile
                   ? Column(
                 children: [
-                  _timingsBox(isMobile , context),
-                  SizedBox(height: cardSpacing),
-                  _attendancePolicyBox(isMobile , context),
+                  _timingsBox(isMobile, context),
+                  SizedBox(height: boxSpacing),
+                  _attendancePolicyBox(isMobile, context),
                 ],
               )
                   : Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: _timingsBox(isMobile , context)),
-                  SizedBox(width: cardSpacing),
-                  Expanded(child: _attendancePolicyBox(isMobile , context)),
+                  Expanded(child: _timingsBox(isMobile, context)),
+                  SizedBox(width: boxSpacing),
+                  Expanded(child: _attendancePolicyBox(isMobile, context)),
                 ],
               ),
-              SizedBox(height: isMobile ? context.h(0.7) : context.h(1.4)),
+              SizedBox(height: boxSpacing),
+
               // Working Days & Off Days
               isMobile
                   ? Column(
                 children: [
-                  _workingDaysBox(isMobile , context),
-                  SizedBox(height: cardSpacing),
-                  _weekendBox(isMobile , context),
+                  _workingDaysBox(isMobile, context),
+                  SizedBox(height: boxSpacing),
+                  _weekendBox(isMobile, context),
                 ],
               )
                   : Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: _workingDaysBox(isMobile , context)),
-                  SizedBox(width: cardSpacing),
-                  Expanded(child: _weekendBox(isMobile , context)),
+                  Expanded(child: _workingDaysBox(isMobile, context)),
+                  SizedBox(width: boxSpacing),
+                  Expanded(child: _weekendBox(isMobile, context)),
                 ],
               ),
-              SizedBox(height: isMobile ? context.h(1) : context.h(1.7)),
+              SizedBox(height: boxSpacing),
             ],
           ),
         ),
@@ -148,7 +150,12 @@ class SchoolDays extends StatelessWidget {
     );
   }
 
-  // Card widget for stats (numbers)
+// باقي الدوال زي ما هم: _statCard, _timingsBox, _attendancePolicyBox, _workingDaysBox, _weekendBox, _timingRow, _attendanceItem, _dayChip
+// ولو بتحب أعدلهم زيادة بالداخل أو توسع بعض العناصر بلغني!
+}
+
+
+// Card widget for stats (numbers)
   Widget _statCard(String value, String label, IconData icon, Color color, bool isMobile , BuildContext context) {
     return Container(
       height: isMobile ? context.h(6) : context.h(7.6),
@@ -422,7 +429,7 @@ class SchoolDays extends StatelessWidget {
   }
 
   // Timing Row
-  static Widget _timingRow(String label, String time, IconData icon, Color iconColor, bool isMobile , BuildContext context) {
+   Widget _timingRow(String label, String time, IconData icon, Color iconColor, bool isMobile , BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: isMobile ? context.w(1.9) : context.w(3.1), vertical: isMobile ? context.h(0.6) : context.h(0.8)),
       margin: EdgeInsets.symmetric(vertical: context.h(0.2)),
@@ -450,7 +457,7 @@ class SchoolDays extends StatelessWidget {
   }
 
   // Attendance Row
-  static Widget _attendanceItem(String label, String value, IconData icon, Color iconColor, Color bg, Color textColor, bool isMobile , BuildContext context) {
+   Widget _attendanceItem(String label, String value, IconData icon, Color iconColor, Color bg, Color textColor, bool isMobile , BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: isMobile ? context.w(1.9) : context.w(3.1), vertical: isMobile ? context.h(0.6) : context.h(0.8)),
       margin: EdgeInsets.symmetric(vertical: context.h(0.2)),
@@ -479,7 +486,7 @@ class SchoolDays extends StatelessWidget {
   }
 
   // Day Chip
-  static Widget _dayChip(String text, Color borderColor, BuildContext context, {Color? bg, double size = 12}) {
+   Widget _dayChip(String text, Color borderColor, BuildContext context, {Color? bg, double size = 12}) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: size, vertical: size * 0.6),
       decoration: BoxDecoration(
@@ -497,4 +504,3 @@ class SchoolDays extends StatelessWidget {
       ),
     );
   }
-}

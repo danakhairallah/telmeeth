@@ -27,26 +27,20 @@ class HighlightController with ChangeNotifier {
 
   // ================= ADD =================
   Future<void> addHighlight(HighlightRequest request) async {
-    isLoading = true;
-    notifyListeners();
+  try {
+    final HighlightData? newHighlight =
+        await _services.addHighlight(request);
 
-    try {
-      final HighlightData? newHighlight =
-          await _services.addHighlight(request);
-
-      if (newHighlight != null) {
-        highlightModel ??= HighlightModel(data: []);
-        highlightModel!.data.add(newHighlight);
-      } else {
-        print("Add Highlight failed");
-      }
-    } catch (e) {
-      print("Add Highlight Error: $e");
-    } finally {
-      isLoading = false;
+    if (newHighlight != null) {
+      highlightModel ??= HighlightModel(data: []);
+      highlightModel!.data.insert(0, newHighlight); // 👈 خلي الجديد يطلع فوق
       notifyListeners();
     }
+  } catch (e) {
+    print("Add Highlight Error: $e");
   }
+}
+
 
   // ================= GET BY ID =================
   Future<HighlightData?> getHighlightById(int id) async {
@@ -67,50 +61,37 @@ class HighlightController with ChangeNotifier {
 
   // ================= UPDATE =================
   Future<void> updateHighlight({
-    required int id,
-    required HighlightRequest request,
-  }) async {
-    isLoading = true;
-    notifyListeners();
+  required int id,
+  required HighlightRequest request,
+}) async {
+  try {
+    final HighlightData? updated =
+        await _services.updateHighlight(id, request);
 
-    try {
-      final HighlightData? updated =
-          await _services.updateHighlight(id, request);
-
-      if (updated != null) {
-        // البحث عن الـ highlight القديم واستبداله
-        final index = highlightModel!.data.indexWhere((h) => h.id == id);
-        if (index != -1) {
-          highlightModel!.data[index] = updated;
-        }
-      } else {
-        print("Update Highlight failed");
+    if (updated != null && highlightModel != null) {
+      final index =
+          highlightModel!.data.indexWhere((h) => h.id == id);
+      if (index != -1) {
+        highlightModel!.data[index] = updated;
+        notifyListeners();
       }
-    } catch (e) {
-      print("Update Highlight Error: $e");
-    } finally {
-      isLoading = false;
-      notifyListeners();
     }
+  } catch (e) {
+    print("Update Highlight Error: $e");
   }
+}
+
 
   // ================= DELETE =================
   Future<void> deleteHighlight({required int id}) async {
-  isLoading = true;
-  notifyListeners();
-
   try {
     final success = await _services.deleteHighlight(id);
     if (success) {
-      highlightModel!.data.removeWhere((h) => h.id == id);
-    } else {
-      print("Delete Highlight failed");
+      highlightModel?.data.removeWhere((h) => h.id == id);
+      notifyListeners();
     }
   } catch (e) {
     print("Delete Highlight Error: $e");
-  } finally {
-    isLoading = false;
-    notifyListeners();
   }
 }
 

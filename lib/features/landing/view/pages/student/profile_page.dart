@@ -5,6 +5,7 @@ import 'package:telmeeth/core/api/model/response/profile_data.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/drawer.dart';
 import 'package:telmeeth/core/widgets/student/student_app_bar.dart';
+import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 import '../../../../../core/widgets/student/navigation.dart';
 import 'package:provider/provider.dart';
 
@@ -42,14 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Scaffold(
-      appBar: const StudentAppBar(),
-      drawer: const AppDrawer(),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(context.w(4)),
-          child: const NavigationBarPrimary(),
-        ),
-      ),
+      appBar: const StudentFeaturesAppBar(),
       body: Consumer<ProfileController>(
         builder: (context, controller, _) {
           if (controller.isLoading) {

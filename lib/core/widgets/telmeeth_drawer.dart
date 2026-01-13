@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:telmeeth/features/landing/view/pages/landing/ai_tools_page.dart';
 import 'package:telmeeth/features/landing/view/pages/landing/blog_page.dart';
 import 'package:telmeeth/features/landing/view/pages/landing/our_impact_page.dart';
 import 'package:telmeeth/features/landing/view/pages/landing/stories_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../features/landing/view/pages/landing/guidance_page.dart';
 import '../../features/landing/view/pages/landing/our_schools_page.dart';
@@ -45,8 +47,9 @@ class TelmeethDrawer extends StatelessWidget {
 
               // ---- More About Us ----
               ExpansionTile(
-                leading: const Icon(
-                  Icons.menu_book_outlined,
+                leading: Icon(
+                  LucideIcons.bookOpen,
+                  // أيقونة كتاب مفتوح (بدل menu_book_outlined)
                   color: Colors.deepPurple,
                 ),
                 title: const Text(
@@ -55,7 +58,8 @@ class TelmeethDrawer extends StatelessWidget {
                 ),
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.info_outline),
+                    leading: Icon(LucideIcons.info, color: Colors.blueGrey),
+                    // Overview
                     title: const Text('Overview'),
                     onTap: () {
                       Navigator.of(context).push(
@@ -64,54 +68,82 @@ class TelmeethDrawer extends StatelessWidget {
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.smart_toy_outlined),
+                    leading: Icon(LucideIcons.brainCircuit, color: Colors.teal),
+                    // AI Tools
                     title: const Text('AI Tools'),
-                    onTap: () {Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const AiToolsPage()),
-                    );},
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const AiToolsPage()),
+                      );
+                    },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.groups_2),
+                    leading: Icon(LucideIcons.users, color: Colors.orange),
+                    // Stories
                     title: const Text('Stories'),
-                    onTap: () { Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const StoriesPage()),
-                    );},
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const StoriesPage()),
+                      );
+                    },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.public),
+                    leading: Icon(LucideIcons.globe, color: Colors.blue),
+                    // Our Impact
                     title: const Text('Our Impact'),
-                    onTap: () { Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const OurImpactPage()),
-                    );},
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const OurImpactPage(),
+                        ),
+                      );
+                    },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.psychology_alt_outlined),
+                    leading: Icon(
+                      LucideIcons.compass,
+                      color: Colors.deepPurple,
+                    ),
+                    // Guidance
                     title: const Text('Guidance'),
-                    onTap: () { Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const GuidancePage ()),
-                    );},
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const GuidancePage()),
+                      );
+                    },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.school_outlined),
+                    leading: Icon(
+                      LucideIcons.graduationCap,
+                      color: Colors.green,
+                    ),
+                    // Our Schools
                     title: const Text('Our Schools'),
-                    onTap: () {Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const OurSchoolsPage  ()),
-                    );},
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const OurSchoolsPage(),
+                        ),
+                      );
+                    },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.feed),
+                    leading: Icon(
+                      LucideIcons.newspaper,
+                      color: Colors.pink,
+                    ), // Blog
                     title: const Text('Blog'),
-                    onTap: () { Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const BlogPage()),
-                    );},
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const BlogPage()),
+                      );
+                    },
                   ),
                 ],
               ),
-              const Divider(),
-
               ExpansionTile(
                 leading: const Icon(
-                  Icons.settings_outlined,
+                  LucideIcons.settings,
                   color: Colors.blueGrey,
                 ),
                 title: const Text(
@@ -121,14 +153,17 @@ class TelmeethDrawer extends StatelessWidget {
                 children: [
                   ListTile(
                     leading: Icon(
-                      isDark ? Icons.dark_mode : Icons.light_mode,
+                      isDark ? LucideIcons.moon : LucideIcons.sun,
                       color: Colors.orange[800],
                     ),
                     title: Text(isDark ? 'Light Mode' : 'Dark Mode'),
                     onTap: onToggleTheme,
                   ),
                   ListTile(
-                    leading: const Icon(Icons.language, color: Colors.teal),
+                    leading: const Icon(
+                      LucideIcons.languages,
+                      color: Colors.teal,
+                    ),
                     title: const Text('Language'),
                     onTap: onChangeLanguage ?? () {},
                     trailing: const Text(
@@ -138,42 +173,51 @@ class TelmeethDrawer extends StatelessWidget {
                   ),
                 ],
               ),
-              const Divider(),
 
               // ---- Contact Us ----
               ExpansionTile(
-                leading: const Icon(Icons.mail_outline, color: Colors.deepOrange),
+                leading: const Icon(
+                  LucideIcons.mails, // أيقونة الإيميل
+                  color: Colors.deepOrange,
+                ),
                 title: const Text(
                   'Contact Us',
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 children: [
                   ListTile(
-                    leading: const Icon(
-                      Icons.email_outlined,
+                    leading: Icon(
+                      LucideIcons.mail,
                       color: Colors.deepOrange,
                     ),
                     title: const Text('info@telmeeth.com'),
-                    onTap: () {},
+                    onTap: () {
+                      _forceOpenUrl('mailto:info@telmeeth.com');
+                    },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.phone, color: Colors.green),
+                    leading: Icon(
+                      LucideIcons.phone,
+                      color: Colors.green,
+                    ),
                     title: const Text('+962 7 9131 1369'),
-                    onTap: () {},
+                    onTap: () {
+                      _forceOpenUrl('tel:+962791311369');
+                    },
                   ),
                   ListTile(
-                    leading: const Icon(
-                      Icons.location_on_outlined,
+                    leading: Icon(
+                      LucideIcons.mapPin,
                       color: Colors.blue,
                     ),
                     title: const Text('Zahran St 192, Amman, Jordan'),
-                    onTap: () {},
+                    onTap: () {
+                      // إحداثيات الموقع (يفضل تبحث عنها بدقة)
+                      _forceOpenUrl('https://www.google.com/maps/search/?api=1&query=Zahran+St+192,+Amman,+Jordan');
+                    },
                   ),
-                ],
-              ),
-              const Divider(),
+                ],              ),
 
-              // ---- Follow Us (Row, not expandable) ----
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 4.0),
                 child: Text(
@@ -182,38 +226,71 @@ class TelmeethDrawer extends StatelessWidget {
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.facebook, color: Color(0xFF4267B2)),
-                    onPressed: () {}, // Facebook link
+                    icon: Icon(LucideIcons.facebook, color: Color(0xFF1877F3)),
+                    onPressed: () => _forceOpenUrl(
+                      'https://web.facebook.com/telmeethacademy#',
+                    ),
                     tooltip: 'Facebook',
                   ),
                   IconButton(
-                    icon: const Icon(
-                      Icons.linked_camera,
-                      color: Color(0xFF0077B5),
+                    icon: Icon(LucideIcons.linkedin, color: Color(0xFF0077B5)),
+                    onPressed: () => _forceOpenUrl(
+                      'https://www.linkedin.com/company/telmeethsolutions/',
                     ),
-                    onPressed: () {}, // LinkedIn
                     tooltip: 'LinkedIn',
                   ),
                   IconButton(
-                    icon: const Icon(Icons.camera_alt, color: Color(0xFFC13584)),
-                    onPressed: () {}, // Instagram
+                    icon: Icon(LucideIcons.instagram, color: Color(0xFFC13584)),
+                    onPressed: () => _forceOpenUrl(
+                      'https://www.instagram.com/telmeeth_academy/',
+                    ),
                     tooltip: 'Instagram',
                   ),
                   IconButton(
-                    icon: const Icon(Icons.ondemand_video, color: Colors.red),
-                    onPressed: () {}, // YouTube
+                    icon: Icon(LucideIcons.youtube, color: Colors.red),
+                    onPressed: () =>
+                        _forceOpenUrl('https://www.youtube.com/@Telmeeth_Edu'),
                     tooltip: 'YouTube',
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _forceOpenUrl(String urlString) async {
+    final url = Uri.parse(urlString);
+
+    // حاول فتحه بالمتصفح الخارجي أولاً
+    try {
+      bool launched = await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched) {
+        // إذا فشل جرب داخلي في WebView
+        await launchUrl(
+          url,
+          mode: LaunchMode.inAppWebView,
+          webViewConfiguration: const WebViewConfiguration(
+            enableJavaScript: true,
+          ),
+        );
+      }
+    } catch (_) {
+      // لو صار أي خطأ، جرب داخلي كـ fallback
+      await launchUrl(
+        url,
+        mode: LaunchMode.inAppWebView,
+        webViewConfiguration: const WebViewConfiguration(
+          enableJavaScript: true,
+        ),
+      );
+    }
   }
 }

@@ -25,11 +25,11 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF), // لون السبلاش
+      backgroundColor: const Color(0xFFFFFFFF),
       body: Center(
         child: Image.asset(
-          'assets/logo_telmeeth.png', // استخدم الصورة الجديدة هنا
-          width: 250, // أو الحجم الذي تريده
+          'assets/Telmeeth logo (2).png',
+          width: 250,
           fit: BoxFit.contain,
         ),
       ),

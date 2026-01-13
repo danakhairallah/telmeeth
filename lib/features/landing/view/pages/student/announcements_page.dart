@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/drawer.dart';
+import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 import '../../../../../core/widgets/student/navigation.dart';
 import '../../../../../core/widgets/student/student_app_bar.dart';
 
@@ -98,13 +99,8 @@ class _AnnouncementsState extends State<Announcements> {
         : teacherAnnouncements;
 
     return Scaffold(
-      appBar: StudentAppBar(),
-      drawer: AppDrawer(),
+      appBar: StudentFeaturesAppBar(),
       backgroundColor: const Color(0xFFF8F3EE),
-      bottomNavigationBar: SafeArea(child: Padding(
-        padding: EdgeInsets.all(context.w(4)),
-        child: NavigationBarPrimary(),
-      )),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: context.w(1.7), vertical: context.h(1)),
