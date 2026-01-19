@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telmeeth/core/api/controllers/worksheet_controller.dart';
-import 'package:telmeeth/core/api/model/request/answer_request.dart';
-import 'package:telmeeth/core/api/model/request/worksheet_request.dart';
-import 'package:telmeeth/core/api/model/response/worksheet.dart';
-import 'package:telmeeth/core/api/model/response/worksheet_data.dart';
-import 'package:telmeeth/core/api/model/response/worksheet_model.dart';
+import 'package:telmeeth/core/api/student/controllers/worksheet_controller.dart';
+import 'package:telmeeth/core/api/student/model/request/worksheet_request.dart';
+import 'package:telmeeth/core/api/student/model/response/worksheet_data.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/container.dart';
 import 'package:telmeeth/core/widgets/student/custom_container1.dart';
@@ -34,84 +31,121 @@ class _WorksheetDetailPageState extends State<WorksheetDetailPage> {
   }
 
   Future<void> fetchWorksheetDetail() async {
-    setState(() {
-      isLoading = true;
-    });
+  if (!mounted) return;
+
+  setState(() {
+    isLoading = true; // تفعيل الـ loading
+  });
+
+  try {
+    // استدعاء الكنترولر من الـ Provider
     await context.read<WorksheetController>().getWorksheetById(widget.worksheetId);
+
+    if (!mounted) return;
+
+    // جلب الورقة المختارة من الكنترولر
     worksheetData = context.read<WorksheetController>().selectedWorksheet;
+  } catch (e) {
+    print("Error fetching worksheet detail: $e");
+  } finally {
+    if (!mounted) return;
+
     setState(() {
-      isLoading = false;
+      isLoading = false; // إيقاف الـ loading
     });
   }
+}
+
 
   void submitWorksheet() async {
-    if (worksheetData?.worksheet == null) return;
+  if (worksheetData?.worksheet == null) return;
 
-    // التحقق من أن كل سؤال نصي (essay) تمت الإجابة عليه
-    final essayQuestions = worksheetData?.worksheet?.essayQuestions ?? [];
-    final incompleteEssays = essayQuestions
-        .where((q) => (essayAnswers[q.id] == null || essayAnswers[q.id]!.trim().isEmpty))
-        .toList();
+  final request = WorksheetSubmitRequest(
+    answers: [
+      ...mcqAnswers.entries.map((e) => Answer(
+            type: 'mcq',
+            questionId: e.key,
+            answer: e.value,
+          )),
+      ...essayAnswers.entries.map((e) => Answer(
+            type: 'essay',
+            questionId: e.key,
+            answer: e.value,
+          )),
+    ],
+  );
 
-    // التحقق من أنه يوجد إجابة على الأقل لأي سؤال
-    final hasAnswers = mcqAnswers.isNotEmpty || essayAnswers.isNotEmpty;
-
-    if (!hasAnswers) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('جاوب على الأقل سؤال واحد قبل إرسال الورقة!'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
-
-    if (incompleteEssays.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('فيه أسئلة نصية غير مجاوب عليها!'),
-          backgroundColor: Colors.red.shade600,
-        ),
-      );
-      return;
-    }
-
-    final request = WorksheetSubmitRequest(
-      answers: [
-        ...mcqAnswers.entries.map((e) => Answer(
-          type: 'mcq',
-          questionId: e.key,
-          answer: e.value,
-        )),
-        ...essayAnswers.entries.map((e) => Answer(
-          type: 'essay',
-          questionId: e.key,
-          answer: e.value,
-        )),
-      ],
-    );
-
-    final success = await context
+  try {
+    final response = await context
         .read<WorksheetController>()
         .submitWorksheet(worksheetData!.worksheet!.id, request);
 
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم إرسال الورقة بنجاح ✅'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      Navigator.pop(context);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('فشل إرسال الورقة. حاول لاحقاً! ❌'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    showResultDialog(
+      context,
+      success: true,
+      message: response.message ?? "Submitted successfully",
+      mark: response.totalMark,
+    );
+  } catch (e) {
+    showResultDialog(
+      context,
+      success: false,
+      message: "Failed to submit worksheet",
+    );
   }
+}
+
+
+void showResultDialog(
+  BuildContext context, {
+  required String message,
+  bool success = true,
+  int? mark,
+}) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Text(
+          success ? "🎉 Success" : "❌ Failed",
+          style: TextStyle(
+            color: success ? Colors.green : Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(message, textAlign: TextAlign.center),
+            if (mark != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                "Your Mark: $mark",
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // يسكر الديالوك
+              if (success) Navigator.pop(context); // يرجع للصفحة السابقة
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +270,7 @@ class _WorksheetDetailPageState extends State<WorksheetDetailPage> {
                               TextField(
                                 maxLines: null,
                                 onChanged: (value) {
-                                  essayAnswers[q.id!] = value;
+                                  essayAnswers[q!.id!] = value;
                                 },
                                 decoration: const InputDecoration(
                                   border: OutlineInputBorder(),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/request/report_request.dart';
-import 'package:telmeeth/core/api/model/response/report_respons.dart' hide AiReportModel;
-import 'package:telmeeth/core/api/model/request/ai_report_model.dart';
+import 'package:telmeeth/core/api/student/model/response/ai_report_model.dart';
+import 'package:telmeeth/core/api/student/model/request/report_request.dart';
+import 'package:telmeeth/core/api/student/model/response/report_respons.dart';
+
 
 class AiReportService {
 

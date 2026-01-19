@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telmeeth/core/api/controllers/behavior_controller.dart';
-import 'package:telmeeth/core/api/model/response/behavior_model.dart';
+import 'package:telmeeth/core/api/student/controllers/behavior_controller.dart';
+import 'package:telmeeth/core/api/student/model/response/behavior_model.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 
@@ -40,9 +40,10 @@ class _BehaviorsState extends State<Behaviors> {
               children: [
                 _header(
                   context,
-                  controller.response?.studentName ?? 'Student',
+                  controller.response?.studentNameAr ?? 'الطالب',
                   controller.response?.totalScore ?? 0,
                 ),
+
                 SizedBox(height: context.h(2)),
                 _statsFromApi(context, controller),
                 SizedBox(height: context.h(3)),
@@ -75,7 +76,7 @@ Widget _header(BuildContext context, String name, int score) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                name,
+                name, // استخدم اسم الطالب العربي أو الإنجليزي حسب السياق
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -108,40 +109,36 @@ Widget _header(BuildContext context, String name, int score) {
     ),
   );
 }
-
 Widget _statsFromApi(BuildContext context, BehaviorController controller) {
-  return GridView(
-    shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(),
-    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: MediaQuery.of(context).size.width < 700 ? 2 : 4,
-      mainAxisSpacing: context.h(2),
-      crossAxisSpacing: context.w(2),
-      childAspectRatio: 3,
-    ),
-    children: [
-      _StatCard(
-        title: 'Total Records',
-        value: controller.response?.behaviors?.length.toString() ?? '0',
+  return
+    GridView(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: MediaQuery.of(context).size.width < 700 ? 2 : 3,
+        mainAxisSpacing: context.h(2),
+        crossAxisSpacing: context.w(2),
+        childAspectRatio: 3,
       ),
-      _StatCard(
-        title: 'Positive',
-        value: controller.positiveCount.toString(),
-      ),
-      _StatCard(
-        title: 'Negative',
-        value: controller.negativeCount.toString(),
-      ),
-      _StatCard(
-        title: 'Neutral',
-        value: controller.neutralCount.toString(),
-      ),
-    ],
-  );
+      children: [
+        _StatCard(
+          title: 'Total Records',
+          value: controller.response?.behaviors?.length.toString() ?? '0',
+        ),
+        _StatCard(
+          title: 'Positive',
+          value: controller.positiveCount.toString(),
+        ),
+        _StatCard(
+          title: 'Negative',
+          value: controller.negativeCount.toString(),
+        ),
+      ],
+    );
 }
 
 Widget _behaviorCardFromApi(BuildContext context, Behavior b) {
-  final isPositive = b.type == 'positive';
+  final isPositive = (b.score ?? 0) > 0;
 
   return Container(
     margin: const EdgeInsets.only(bottom: 12),
@@ -165,13 +162,15 @@ Widget _behaviorCardFromApi(BuildContext context, Behavior b) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                b.title ?? 'Behavior',
+                b.behaviorName ?? 'Behavior',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
                 b.description ?? '',
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
+              // لو تريد تظهر نص الشهادة
+              // Text(b.certificateTextAr ?? ''),
             ],
           ),
         ),
@@ -190,7 +189,6 @@ Widget _behaviorCardFromApi(BuildContext context, Behavior b) {
     ),
   );
 }
-
 class _StatCard extends StatelessWidget {
   final String title;
   final String value;

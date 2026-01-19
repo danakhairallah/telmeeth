@@ -288,7 +288,7 @@ class _AttachmentsState extends State<Attachments> {
         ),
         SizedBox(height: context.h(0.3)),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           items: items
               .map((d) => DropdownMenuItem(
             value: d,

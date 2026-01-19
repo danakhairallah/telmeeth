@@ -6,7 +6,6 @@ import '../../../../../core/widgets/parent/features_app_bar.dart';
 class AnnouncementsParent extends StatelessWidget {
   const AnnouncementsParent({super.key});
 
-  // بيانات وهمية للإعلانات
   List<Map<String, dynamic>> get announcements => [
     {
       "icon": Icons.track_changes, // أو Icons.campaign وهكذا
@@ -131,7 +130,7 @@ class AnnouncementsParent extends StatelessWidget {
                     ),
                     SizedBox(height: context.h(0.6)),
                     DropdownButtonFormField<String>(
-                      value: "هند علي سالم",
+                      initialValue: "هند علي سالم",
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.symmetric(
                           vertical: context.h(1.2),

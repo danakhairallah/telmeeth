@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/response/time_table_model.dart';
+import 'package:telmeeth/core/api/student/model/response/time_table_model.dart';
 
 class TimeTableServices {
   Dio? dio;

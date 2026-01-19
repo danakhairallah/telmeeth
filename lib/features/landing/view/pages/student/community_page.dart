@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
-import '../../../../../core/widgets/parent/features_app_bar.dart';
 
 class Communities extends StatefulWidget {
   const Communities({super.key});

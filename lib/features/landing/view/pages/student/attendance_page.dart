@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:telmeeth/core/api/controllers/attendance_controller.dart';
-import 'package:telmeeth/core/api/controllers/website_activity_controller.dart';
-import 'package:telmeeth/core/api/model/response/interactive.dart';
+import 'package:telmeeth/core/api/student/controllers/attendance_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/website_activity_controller.dart';
+import 'package:telmeeth/core/api/student/model/response/interactive.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/container.dart';
 import 'package:telmeeth/core/widgets/student/custom_container1.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 
-import '../../../../../core/widgets/student/drawer.dart';
-import '../../../../../core/widgets/student/navigation.dart';
-import '../../../../../core/widgets/student/student_app_bar.dart';
 
 class Attendance extends StatefulWidget {
   const Attendance({super.key});

@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:telmeeth/core/api/student/controllers/ai_advice_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/ai_message_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/chatbot_controller.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
-import '../../../../../core/api/controllers/ai_advice_controller.dart';
-import '../../../../../core/api/controllers/ai_message_controller.dart';
 import '../../../../../core/widgets/student/student_features_app_bar.dart';
 
 class SmartAssistant extends StatefulWidget {
-  const SmartAssistant({super.key});
+  final int initialTab;
+  const SmartAssistant({super.key, this.initialTab = 0});
 
   @override
   State<SmartAssistant> createState() => _SmartAssistantState();
 }
 
 class _SmartAssistantState extends State<SmartAssistant> {
-  int _selectedTab = 0;
+  late int _selectedTab;
 
   @override
   void initState() {
     super.initState();
+    _selectedTab = widget.initialTab; // يبدأ حسب ما أرسلتله
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AiAdviceController>().getAiAdvices();
-      context.read<AiMessageController>().getTodayMessages();
+      context.read<ChatbotController>().fetchMessages();
     });
   }
 
@@ -122,27 +125,25 @@ class _SmartAssistantState extends State<SmartAssistant> {
       child: Column(
         children: [
           Expanded(
-            child: Consumer<AiMessageController>(
-              builder: (context, ai, _) {
-                print('Messages: ${ai.todayMessages}');
-                if (ai.isLoading && ai.todayMessages.isEmpty) {
+            child: Consumer<ChatbotController>(
+              builder: (context, chat, _) {
+                if (chat.isLoading && chat.messages.isEmpty) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                if (ai.todayMessages.isEmpty) {
+                if (chat.messages.isEmpty) {
                   return Center(child: Text("ابدأ المحادثة مع المساعد الذكي"));
                 }
                 return ListView.builder(
                   padding: EdgeInsets.all(context.w(2)),
-                  itemCount: ai.todayMessages.length,
+                  itemCount: chat.messages.length,
                   itemBuilder: (context, index) {
-                    final msg = ai.todayMessages[index];
-                    print('Message $index: $msg');
+                    final msg = chat.messages[index];
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Align(
                           alignment: Alignment.centerRight,
-                          child: _chatBubble(msg.content, true),
+                          child: _chatBubble(msg.message, true),
                         ),
                         Align(
                           alignment: Alignment.centerLeft,
@@ -155,7 +156,6 @@ class _SmartAssistantState extends State<SmartAssistant> {
               },
             ),
           ),
-
           Row(
             children: [
               Expanded(
@@ -167,13 +167,20 @@ class _SmartAssistantState extends State<SmartAssistant> {
                   ),
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.send, color: Colors.orange),
-                onPressed: () {
-                  if (controller.text.trim().isEmpty) return;
-                  context.read<AiMessageController>().sendMessage(controller.text.trim());
-                  controller.clear();
-                },
+              Consumer<ChatbotController>(
+                builder: (context, chat, _) => IconButton(
+                  icon: const Icon(Icons.send, color: Colors.orange),
+                  onPressed: () async {
+                    if (controller.text.trim().isEmpty) return;
+
+                    await context
+                        .read<AiMessageController>()
+                        .sendMessage(controller.text.trim());
+
+                    controller.clear();
+                  },
+                ),
+
               ),
             ],
           ),
@@ -246,7 +253,7 @@ class _SmartAssistantState extends State<SmartAssistant> {
                   style: TextStyle(fontSize: context.w(3)),
                 ),
               );
-            }).toList(),
+            }),
           ],
         );
       },

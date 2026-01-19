@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/request/update_profile_requect.dart';
-import 'package:telmeeth/core/api/model/response/profile_model.dart';
+import 'package:telmeeth/core/api/student/model/request/profile_complet_request.dart';
+import 'package:telmeeth/core/api/student/model/request/update_profile_requect.dart';
+import 'package:telmeeth/core/api/student/model/response/complet_profile_response.dart';
+import 'package:telmeeth/core/api/student/model/response/profile_model.dart';
 
 class ProfileServices {
   Dio? dio;
@@ -57,4 +59,41 @@ class ProfileServices {
 
   return null;
 }
+
+Future<CompletProfileResponse?> completProfile(ProfileCompletRequest request) async {
+  try {
+    final dio = await ApiClient.getDio();
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("accessToken") ?? "";
+
+    final formData = await request.toFormData();
+
+    final response = await dio.post(
+      "/student/complete-profile",
+      data: formData,
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "multipart/form-data",
+        },
+      ),
+    );
+
+    if (response.data != null) {
+      return CompletProfileResponse.fromJson(response.data);
+    } else {
+      return CompletProfileResponse(
+        success: false,
+        message: "No response from server",
+      );
+    }
+  } catch (e) {
+    print("Update Profile Error: $e");
+    return CompletProfileResponse(
+      success: false,
+      message: "Error while updating profile",
+    );
+  }
+}
+
 }

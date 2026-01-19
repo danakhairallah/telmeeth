@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:telmeeth/core/api/student/controllers/student_messages_controller.dart';
+import 'package:telmeeth/core/api/student/model/response/message_model.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
+import 'package:provider/provider.dart';
 
 class Messages extends StatefulWidget {
   const Messages({super.key});
@@ -14,13 +17,16 @@ class _MessagesState extends State<Messages> {
   int sideTabIndex = 0;
   bool showNewConversationDialog = false;
 
-  List<Map<String, String>> parentsMessages = [
-    {
-      "sender": "Parent",
-      "date": "12/30/2025",
-      "content": "You always make us proud! 🌟",
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final controller = context.read<StudentMessagesController>();
+      controller.loadParentMessages();
+      controller.loadTeacherMessages();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +38,10 @@ class _MessagesState extends State<Messages> {
       backgroundColor: const Color(0xFFF7F8F9),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: context.w(1.4), vertical: context.h(0.8)),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.w(1.4),
+            vertical: context.h(0.8),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -110,7 +119,9 @@ class _MessagesState extends State<Messages> {
       children: [
         if (mainTabIndex == 0)
           Container(
-            width: context.w(84),
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.96,
+            ),
             padding: EdgeInsets.symmetric(vertical: context.h(0.6)),
             child: Column(
               children: [
@@ -316,100 +327,238 @@ class _MessagesState extends State<Messages> {
             builder: (_) {
               if (mainTabIndex == 0 && sideTabIndex == 2) {
                 return const SizedBox.shrink();
-              } else if (mainTabIndex == 1) {
-                final msg = parentsMessages.first;
-                return Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    width: context.w(85.1),
-                    height: context.h(10),
-                    padding: EdgeInsets.symmetric(
-                      vertical: context.h(1.6),
-                      horizontal: context.w(3.1),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(context.h(1.3)),
-                      border: Border.all(
-                        color: const Color(0xFFFFE9F1),
-                        width: context.w(0.18),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.pink.withOpacity(0.05),
-                          blurRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(context.w(1.2)),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFE9F1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.favorite,
-                            color: Color(0xFFE02F78),
-                            size: context.w(3.4),
+              }
+
+              // ================== PARENTS ==================
+              else if (mainTabIndex == 1) {
+                return Consumer<StudentMessagesController>(
+                  builder: (context, controller, _) {
+                    if (controller.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final List<MessageModel> messages =
+                        controller.parentMessages?.messages ?? [];
+
+                    if (messages.isEmpty) {
+                      return Center(
+                        child: Text(
+                          "No messages from parents yet.",
+                          style: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: context.w(3.1),
                           ),
                         ),
-                        SizedBox(width: context.w(2.1)),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                msg["sender"]!,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: context.w(3.4),
+                      );
+                    }
+
+                    return ListView.builder(
+                      padding: EdgeInsets.only(top: context.h(1)),
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final msg = messages[index];
+
+                        return Align(
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: context.h(1)),
+                            width: context.w(85.1),
+                            height: context.h(10),
+                            padding: EdgeInsets.symmetric(
+                              vertical: context.h(1.6),
+                              horizontal: context.w(3.1),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(context.h(1.3)),
+                              border: Border.all(
+                                color: const Color(0xFFFFE9F1),
+                                width: context.w(0.18),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.pink.withOpacity(0.05),
+                                  blurRadius: 5,
                                 ),
-                              ),
-                              Text(
-                                msg["date"]!,
-                                style: TextStyle(
-                                  fontSize: context.w(2.4),
-                                  color: Colors.grey[400],
+                              ],
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(context.w(1.2)),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFFFE9F1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.favorite,
+                                    color: const Color(0xFFE02F78),
+                                    size: context.w(3.4),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: context.h(0.5)),
-                              Text(
-                                msg["content"]!,
-                                style: TextStyle(fontSize: context.w(2.9)),
-                              ),
-                            ],
+                                SizedBox(width: context.w(2.1)),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        msg.senderName,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: context.w(3.4),
+                                        ),
+                                      ),
+                                      Text(
+                                        msg.createdAt
+                                            .toLocal()
+                                            .toString()
+                                            .substring(0, 10),
+                                        style: TextStyle(
+                                          fontSize: context.w(2.4),
+                                          color: Colors.grey[400],
+                                        ),
+                                      ),
+                                      SizedBox(height: context.h(0.5)),
+                                      Text(
+                                        msg.content,
+                                        style:
+                                        TextStyle(fontSize: context.w(2.9)),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              } else if (mainTabIndex == 2) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.school_outlined,
-                        color: Colors.grey[350],
-                        size: context.w(6.3),
-                      ),
-                      SizedBox(height: context.h(1.1)),
-                      Text(
-                        "No messages from teachers yet.",
-                        style: TextStyle(
-                          color: Colors.grey[400],
-                          fontSize: context.w(3.1),
-                        ),
-                      ),
-                    ],
-                  ),
+                        );
+                      },
+                    );
+                  },
                 );
               }
-              return SizedBox.shrink();
+
+              // ================== TEACHERS ==================
+              else if (mainTabIndex == 2) {
+                return Consumer<StudentMessagesController>(
+                  builder: (context, controller, _) {
+                    if (controller.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final List<MessageModel> messages =
+                        controller.teacherMessages?.messages ?? [];
+
+                    if (messages.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.school_outlined,
+                              color: Colors.grey[350],
+                              size: context.w(6.3),
+                            ),
+                            SizedBox(height: context.h(1.1)),
+                            Text(
+                              "No messages from teachers yet.",
+                              style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: context.w(3.1),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      padding: EdgeInsets.only(top: context.h(1)),
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final msg = messages[index];
+
+                        return Align(
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: context.h(1)),
+                            width: context.w(85.1),
+                            height: context.h(10),
+                            padding: EdgeInsets.symmetric(
+                              vertical: context.h(1.6),
+                              horizontal: context.w(3.1),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(context.h(1.3)),
+                              border: Border.all(
+                                color: const Color(0xFFEAF1FF),
+                                width: context.w(0.18),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.blue.withOpacity(0.05),
+                                  blurRadius: 5,
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(context.w(1.2)),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFEAF1FF),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.school,
+                                    color: const Color(0xFF296CF3),
+                                    size: context.w(3.4),
+                                  ),
+                                ),
+                                SizedBox(width: context.w(2.1)),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        msg.senderName,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: context.w(3.4),
+                                        ),
+                                      ),
+                                      Text(
+                                        msg.createdAt
+                                            .toLocal()
+                                            .toString()
+                                            .substring(0, 10),
+                                        style: TextStyle(
+                                          fontSize: context.w(2.4),
+                                          color: Colors.grey[400],
+                                        ),
+                                      ),
+                                      SizedBox(height: context.h(0.5)),
+                                      Text(
+                                        msg.content,
+                                        style:
+                                        TextStyle(fontSize: context.w(2.9)),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              }
+
+              return const SizedBox.shrink();
             },
           ),
         ),
@@ -429,7 +578,7 @@ class _MessagesState extends State<Messages> {
         borderRadius: BorderRadius.circular(context.h(1)),
         onTap: onTap,
         child: Container(
-          height: context.h(3.7),
+          height: context.h(3.9),
           decoration: BoxDecoration(
             color: selected ? color : Colors.white,
             borderRadius: BorderRadius.circular(context.h(1)),
@@ -438,7 +587,11 @@ class _MessagesState extends State<Messages> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, color: selected ? Colors.white : color, size: context.w(3.6)),
+                Icon(
+                  icon,
+                  color: selected ? Colors.white : color,
+                  size: context.w(3.6),
+                ),
                 SizedBox(width: context.w(0.9)),
                 Text(
                   text,
@@ -465,40 +618,24 @@ class _MessagesState extends State<Messages> {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          decoration: BoxDecoration(
-            color: selected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(context.h(0.8)),
-            boxShadow: selected
-                ? [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.08),
-                blurRadius: 2,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: context.w(3.9),
+              color: selected ? Color(0xFF172135) : Colors.black38,
+            ),
+            SizedBox(width: context.w(0.7)),
+            Text(
+              text,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: context.w(3.3),
+                color: selected ? Color(0xFF172135) : Colors.black45,
               ),
-            ]
-                : [],
-          ),
-          padding: EdgeInsets.symmetric(vertical: context.h(0.7)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: context.w(3.4),
-                color: selected ? Color(0xFF172135) : Colors.black38,
-              ),
-              SizedBox(width: context.w(0.7)),
-              Text(
-                text,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: context.w(2.9),
-                  color: selected ? Color(0xFF172135) : Colors.black45,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -508,11 +645,16 @@ class _MessagesState extends State<Messages> {
 Widget _newConversationDialog(BuildContext context) {
   String? selectedType;
   final List<String> recipientTypes = [
-    'Student', 'Teacher', 'Admin', 'ParentModel'
+    'Student',
+    'Teacher',
+    'Admin',
+    'ParentModel',
   ];
   return StatefulBuilder(
     builder: (context, setState) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(context.h(1.4))),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(context.h(1.4)),
+      ),
       backgroundColor: Colors.white,
       contentPadding: EdgeInsets.zero,
       content: SizedBox(
@@ -520,7 +662,12 @@ Widget _newConversationDialog(BuildContext context) {
         child: Stack(
           children: [
             Padding(
-              padding: EdgeInsets.only(top: context.h(1.9), right: context.w(2.9), left: context.w(2.9), bottom: context.h(1.9)),
+              padding: EdgeInsets.only(
+                top: context.h(1.9),
+                right: context.w(2.9),
+                left: context.w(2.9),
+                bottom: context.h(1.9),
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -528,34 +675,49 @@ Widget _newConversationDialog(BuildContext context) {
                   SizedBox(height: 0),
                   Text(
                     "Start New Conversation",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: context.w(4.6)),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: context.w(4.6),
+                    ),
                   ),
                   SizedBox(height: context.h(1.6)),
                   Text(
                     "Recipient Type:",
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.w(3.4)),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: context.w(3.4),
+                    ),
                   ),
                   SizedBox(height: context.h(0.8)),
                   DropdownButtonFormField<String>(
                     value: selectedType,
                     items: recipientTypes
-                        .map((e) => DropdownMenuItem(
-                        value: e,
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
 
-                        child: Text(
-                          e,
-                          style: TextStyle(fontSize: context.w(2.9)),
-                        )))
+                            child: Text(
+                              e,
+                              style: TextStyle(fontSize: context.w(2.9)),
+                            ),
+                          ),
+                        )
                         .toList(),
-                    hint: Text('Select recipient type',
-                        style: TextStyle(
-                            color: Color(0xFFAEB9C6),
-                            fontWeight: FontWeight.w400,
-                            fontSize: context.w(3.4))),
+                    hint: Text(
+                      'Select recipient type',
+                      style: TextStyle(
+                        color: Color(0xFFAEB9C6),
+                        fontWeight: FontWeight.w400,
+                        fontSize: context.w(3.4),
+                      ),
+                    ),
                     icon: Icon(Icons.arrow_drop_down, color: Color(0xFFAEB9C6)),
                     onChanged: (v) => setState(() => selectedType = v),
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: context.w(2.6), vertical: context.h(0.8)),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: context.w(2.6),
+                        vertical: context.h(0.8),
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(context.h(0.9)),
                         borderSide: const BorderSide(color: Color(0xFFE6E8EA)),
@@ -566,26 +728,43 @@ Widget _newConversationDialog(BuildContext context) {
                       ),
                     ),
                     dropdownColor: Colors.white,
-                    style: TextStyle(fontSize: context.w(3.4), color: Color(0xFF283046)),
+                    style: TextStyle(
+                      fontSize: context.w(3.4),
+                      color: Color(0xFF283046),
+                    ),
                   ),
                   if (selectedType != null) ...[
                     SizedBox(height: context.h(1.4)),
                     TextField(
                       style: TextStyle(fontSize: context.w(3.4)),
                       decoration: InputDecoration(
-                        hintText: 'Search for ${selectedType!.toLowerCase()} name...',
+                        hintText:
+                            'Search for ${selectedType!.toLowerCase()} name...',
                         hintStyle: TextStyle(
-                            color: Color(0xFFAEB9C6), fontSize: context.w(3.4)),
-                        prefixIcon: Icon(Icons.search, size: context.w(4.3), color: Color(0xFFAEB9C6)),
+                          color: Color(0xFFAEB9C6),
+                          fontSize: context.w(3.4),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          size: context.w(4.3),
+                          color: Color(0xFFAEB9C6),
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(context.h(0.9)),
-                          borderSide: const BorderSide(color: Color(0xFFE6E8EA)),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFE6E8EA),
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(context.h(0.9)),
-                          borderSide: const BorderSide(color: Color(0xFFD2D7DB)),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFD2D7DB),
+                          ),
                         ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: context.w(2.9), vertical: context.h(0.8)),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: context.w(2.9),
+                          vertical: context.h(0.8),
+                        ),
                         filled: true,
                         fillColor: Colors.white,
                       ),
@@ -603,9 +782,10 @@ Widget _newConversationDialog(BuildContext context) {
                       child: Text(
                         "No users found",
                         style: TextStyle(
-                            color: Color(0xFFAEB9C6),
-                            fontWeight: FontWeight.w500,
-                            fontSize: context.w(3.4)),
+                          color: Color(0xFFAEB9C6),
+                          fontWeight: FontWeight.w500,
+                          fontSize: context.w(3.4),
+                        ),
                       ),
                     ),
                   ],
@@ -616,7 +796,11 @@ Widget _newConversationDialog(BuildContext context) {
               top: 0,
               right: 0,
               child: IconButton(
-                icon: Icon(Icons.close, size: context.w(5), color: Color(0xFFAEB9C6)),
+                icon: Icon(
+                  Icons.close,
+                  size: context.w(5),
+                  color: Color(0xFFAEB9C6),
+                ),
                 splashRadius: context.w(3.6),
                 padding: EdgeInsets.zero,
                 onPressed: () => Navigator.of(context).pop(),

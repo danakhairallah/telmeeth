@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/request/nots_request.dart';
-import 'package:telmeeth/core/api/model/response/note_model.dart';
+import 'package:telmeeth/core/api/student/model/request/nots_request.dart';
+import 'package:telmeeth/core/api/student/model/response/note_model.dart';
 
 class NoteServices {
   Dio? dio;

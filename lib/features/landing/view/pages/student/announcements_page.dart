@@ -228,7 +228,7 @@ class _AnnouncementsState extends State<Announcements> {
     String getTrimmed(String text, bool expanded) {
       if (expanded) return text;
       if (text.length <= 70) return text;
-      return text.substring(0, 70) + "...";
+      return "${text.substring(0, 70)}...";
     }
 
     return AnimatedSize(

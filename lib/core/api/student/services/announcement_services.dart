@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:telmeeth/core/api/model/response/announcement_model.dart';
+import 'package:telmeeth/core/api/student/model/response/announcement_model.dart';
 
 class AnnouncementServices {
   final String baseUrl = 'https://YOUR_BASE_URL';

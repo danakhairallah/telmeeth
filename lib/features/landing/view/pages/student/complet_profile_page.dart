@@ -205,9 +205,9 @@ class _CustomTextField extends StatefulWidget {
 
   const _CustomTextField({
     required this.hintText,
-    this.textColor,
     required this.hintColor,
     this.obscure = false,
+    this.textColor,
     this.controller,
   });
 

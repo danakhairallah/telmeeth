@@ -3,9 +3,6 @@ import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 import '../../../../../core/constants/responsive.dart';
 import '../../../../../core/widgets/student/container.dart';
 import '../../../../../core/widgets/student/custom_container1.dart';
-import '../../../../../core/widgets/student/drawer.dart';
-import '../../../../../core/widgets/student/navigation.dart';
-import '../../../../../core/widgets/student/student_app_bar.dart';
 
 class LiveLessons extends StatelessWidget {
   const LiveLessons({super.key});

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
-import 'package:telmeeth/features/landing/view/pages/parent/profile_parent.dart';
 import 'package:telmeeth/features/landing/view/pages/student/profile_page.dart';
 
 import '../../../features/landing/view/pages/login/login_page.dart';
@@ -9,7 +8,7 @@ import '../../../features/landing/view/pages/login/login_page.dart';
 enum MenuAction {
   language,
   theme,
-  profile, // ✅ جديد
+  profile,
   logout,
 }
 

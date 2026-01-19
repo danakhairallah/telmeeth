@@ -1,43 +1,41 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:telmeeth/core/api/parent/controllers/motivational_messages_controller.dart';
+import 'package:telmeeth/core/api/parent/controllers/my_children_controller.dart';
+import 'package:telmeeth/core/api/parent/controllers/student_controller.dart';
+import 'package:telmeeth/core/api/parent/model/response/motivational_message_model.dart';
+import 'package:telmeeth/core/api/parent/model/response/student_model.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import '../../../../../core/widgets/parent/features_app_bar.dart';
 
-/// =======================
-/// Model
-/// =======================
-class MotivationalMessage {
-  final String childName;
-  final String message;
-  final String? imagePath;
-
-  MotivationalMessage({
-    required this.childName,
-    required this.message,
-    this.imagePath,
-  });
-}
-
-/// =======================
-/// Screen
-/// =======================
 class MotivationalMessagesParent extends StatefulWidget {
   const MotivationalMessagesParent({super.key});
 
   @override
-  State<MotivationalMessagesParent> createState() =>
-      _MotivationalMessagesParentState();
+  State<MotivationalMessagesParent> createState() => _MotivationalMessagesParentState();
 }
 
-class _MotivationalMessagesParentState
-    extends State<MotivationalMessagesParent> {
-  final List<MotivationalMessage> messages = [];
+class _MotivationalMessagesParentState extends State<MotivationalMessagesParent> {
+  int? selectedStudentId;
 
-  final List<String> children = ["Child", "Ahmed", "Sara"];
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<StudentController>().loadMyStudents();
+      context.read<MotivationalMessagesController>().loadMessages();
+    });
+  }
 
-  void _openMessageDialog({MotivationalMessage? message, int? index}) {
-    String? selectedChild = message?.childName;
-    final controller = TextEditingController(text: message?.message);
-    String? imagePath;
+  void _openMessageDialog({
+    MotivationalMessageModel? message,
+    int? index,
+  }) {
+    selectedStudentId = message?.studentId;
+    final controller = TextEditingController(text: message?.message ?? "");
+    File? pickedImage;
+    String? imageFileName;
 
     showDialog(
       context: context,
@@ -53,162 +51,185 @@ class _MotivationalMessagesParentState
             width: isMobile ? double.infinity : 420,
             padding: const EdgeInsets.all(20),
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  /// Header
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child:
+              StatefulBuilder(
+                builder: (context, setState) {
+                  final isLoading =
+                      context.watch<MotivationalMessagesController>().isLoading;
+
+                  return Stack(
                     children: [
-                      const Text(
-                        "Create Message",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.close),
-                      ),
-                    ],
-                  ),
+                      Opacity(
+                        opacity: isLoading ? 0.6 : 1.0,
+                        child: AbsorbPointer(
+                          absorbing: isLoading,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              /// Header
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    message == null ? "Create Message" : "Edit Message",
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    icon: const Icon(Icons.close),
+                                  ),
+                                ],
+                              ),
 
-                  const SizedBox(height: 14),
+                              const SizedBox(height: 14),
 
-                  /// Child
-                  const Text(
-                    "Child *",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 6),
-                  DropdownButtonFormField<String>(
-                    value: selectedChild,
-                    items: children
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                    onChanged: (v) => selectedChild = v,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
+                              /// Child
+                              const Text(
+                                "Child *",
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              const SizedBox(height: 6),
+                              Consumer<StudentController>(
+                                builder: (context, childrenController, _) {
+                                  if (childrenController.isLoading) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  if (childrenController.errorMessage != null) {
+                                    return const Text('Error loading students');
+                                  }
+                                  final students = childrenController.students;
+                                  return DropdownButtonFormField<int>(
+                                    value: selectedStudentId,
+                                    items: students
+                                        .map(
+                                          (student) => DropdownMenuItem<int>(
+                                        value: student.id,
+                                        child: Text(student.nameAr),
+                                      ),
+                                    )
+                                        .toList(),
+                                    onChanged: (v) =>
+                                        setState(() => selectedStudentId = v),
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      contentPadding:
+                                      const EdgeInsets.symmetric(horizontal: 12),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
 
-                  const SizedBox(height: 14),
+                              const SizedBox(height: 14),
 
-                  /// Message
-                  const Text(
-                    "Message *",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 6),
-                  TextField(
-                    controller: controller,
-                    maxLines: 3,
-                    style: const TextStyle(fontSize: 14),
-                    decoration: InputDecoration(
-                      isDense: true,
-                      contentPadding: const EdgeInsets.all(12),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
+                              /// Message
+                              const Text(
+                                "Message *",
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              const SizedBox(height: 6),
+                              TextField(
+                                controller: controller,
+                                maxLines: 3,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.all(12),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
 
-                  const SizedBox(height: 14),
+                              const SizedBox(height: 14),
 
-                  /// Image picker (رجعناه)
-                  const Text(
-                    "Image (optional)",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 6),
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      // TODO: file_picker
-                      imagePath = "dummy_path";
-                    },
-                    icon: const Icon(
-                      Icons.upload_file,
-                      size: 18,
-                      color: Color(0xFF0F4C5C),
-                    ),
-                    // لون الأيقونة
-                    label: const Text(
-                      "Choose File",
-                      style: TextStyle(
-                        color: Color(0xFF0F4C5C), // لون النص
-                      ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
+                              /// Image
+                              const Text(
+                                "Image (optional)",
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              const SizedBox(height: 6),
+                              OutlinedButton.icon(
+                                onPressed: () {
+                                  setState(() {
+                                    pickedImage = null;
+                                    imageFileName = "chosen.jpg";
+                                  });
+                                },
+                                icon: const Icon(Icons.upload_file,
+                                    size: 18, color: Color(0xFF0F4C5C)),
+                                label: Text(
+                                  imageFileName ?? "Choose File",
+                                  style:
+                                  const TextStyle(color: Color(0xFF0F4C5C)),
+                                ),
+                              ),
 
-                  const SizedBox(height: 20),
+                              const SizedBox(height: 20),
 
-                  /// Actions
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          "Cancel",
-                          style: TextStyle(
-                            color: Color(0xFF0F4C5C), // لون النص زر الإلغاء
+                              /// Actions
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("Cancel"),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      if (selectedStudentId == null ||
+                                          controller.text.isEmpty) return;
+
+                                      if (message == null) {
+                                        await context
+                                            .read<MotivationalMessagesController>()
+                                            .createMessage(
+                                          studentId: selectedStudentId!,
+                                          message: controller.text,
+                                          image: pickedImage,
+                                        );
+                                      } else {
+                                        await context
+                                            .read<MotivationalMessagesController>()
+                                            .updateMessage(
+                                          id: message.id,
+                                          message: controller.text,
+                                          image: pickedImage,
+                                        );
+                                      }
+
+                                      if (mounted) Navigator.pop(context);
+                                    },
+                                    child: const Text("Save"),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFF8C00),
-                          // برتقالي مشرق
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+
+                      /// Loader overlay
+                      if (isLoading)
+                        Positioned.fill(
+                          child: Container(
+                            color: Colors.white.withOpacity(0.4),
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           ),
                         ),
-                        onPressed: () {
-                          if (selectedChild == null || controller.text.isEmpty)
-                            return;
-
-                          setState(() {
-                            final newMessage = MotivationalMessage(
-                              childName: selectedChild!,
-                              message: controller.text,
-                              imagePath: imagePath,
-                            );
-
-                            if (index != null) {
-                              messages[index] = newMessage;
-                            } else {
-                              messages.add(newMessage);
-                            }
-                          });
-
-                          Navigator.pop(context);
-                        },
-                        child: const Text(
-                          "Save",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
                     ],
-                  ),
-                ],
+                  );
+                },
               ),
             ),
           ),
@@ -232,7 +253,6 @@ class _MotivationalMessagesParentState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // العنوان مع زر الإنشاء
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -261,7 +281,7 @@ class _MotivationalMessagesParentState
                 ElevatedButton(
                   onPressed: () => _openMessageDialog(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFF8C00), // برتقالي مشرق
+                    backgroundColor: const Color(0xFFFF8C00),
                     padding: EdgeInsets.symmetric(
                       horizontal: context.w(4),
                       vertical: context.h(1.2),
@@ -281,93 +301,117 @@ class _MotivationalMessagesParentState
             SizedBox(height: context.h(3)),
 
             Expanded(
-              child: ListView.separated(
-                itemCount: messages.length,
-                separatorBuilder: (_, __) => SizedBox(height: context.h(2)),
-                itemBuilder: (context, index) {
-                  final msg = messages[index];
-
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFE5E9F2)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Child",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
+              child: Consumer<MotivationalMessagesController>(
+                builder: (context, controller, _) {
+                  if (controller.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (controller.errorMessage != null) {
+                    return Center(child: Text(controller.errorMessage!));
+                  }
+                  if (controller.messages.isEmpty) {
+                    return Center(
+                      child: Text(
+                        "No motivational messages yet.",
+                        style: TextStyle(
+                          color: Colors.blueGrey,
+                          fontSize: isMobile ? context.w(3) : context.w(3.6),
                         ),
-
-                        const SizedBox(height: 8),
-
-                        Text(
-                          msg.message,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Colors.black87,
-                          ),
+                      ),
+                    );
+                  }
+                  return ListView.separated(
+                    itemCount: controller.messages.length,
+                    separatorBuilder: (_, __) => SizedBox(height: context.h(2)),
+                    itemBuilder: (context, index) {
+                      final msg = controller.messages[index];
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
                         ),
-
-                        const SizedBox(height: 16),
-
-                        Row(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFE5E9F2)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: () => _openMessageDialog(
-                                  message: msg,
-                                  index: index,
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(
-                                    color: Color(0xFF0F4C5C),
-                                  ), // أزرق داكن
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: Text(
-                                  "Edit",
-                                  style: TextStyle(
-                                    color: const Color(0xFF0F4C5C), // أزرق داكن
-                                  ),
-                                ),
+                            Text(
+                              msg.studentName ?? '',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    messages.removeAt(index);
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFFF8C00),
-                                  // برتقالي مشرق
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: const Text(
-                                  "Delete",
-                                  style: TextStyle(color: Colors.white),
+                            const SizedBox(height: 8),
+                            Text(
+                              msg.message,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            if (msg.imageUrl != null && msg.imageUrl!.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10, bottom: 8),
+                                child: Image.network(
+                                  msg.imageUrl!,
+                                  height: 120,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () => _openMessageDialog(
+                                      message: msg,
+                                      index: index,
+                                    ),
+                                    style: OutlinedButton.styleFrom(
+                                      side: const BorderSide(
+                                        color: Color(0xFF0F4C5C),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      "Edit",
+                                      style: TextStyle(
+                                        color: Color(0xFF0F4C5C),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      await context
+                                          .read<MotivationalMessagesController>()
+                                          .deleteMessage(msg.id);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFFF8C00),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      "Delete",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   );
                 },
               ),

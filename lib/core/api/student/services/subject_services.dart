@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/response/subject_model.dart';
-import 'package:telmeeth/core/api/model/response/unite_model.dart';
+import 'package:telmeeth/core/api/student/model/response/subject_model.dart';
+import 'package:telmeeth/core/api/student/model/response/unite_model.dart';
 
 class SubjectServices {
   Dio? dio;

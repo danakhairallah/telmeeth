@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/request/worksheet_request.dart';
-import 'package:telmeeth/core/api/model/response/worksheet.dart';
-import 'package:telmeeth/core/api/model/response/worksheet_data.dart';
+import 'package:telmeeth/core/api/student/model/request/worksheet_request.dart';
+import 'package:telmeeth/core/api/student/model/response/worksheet.dart';
+import 'package:telmeeth/core/api/student/model/response/worksheet_data.dart';
+import 'package:telmeeth/core/api/student/model/response/worksheet_submit_response.dart';
 
 class WorksheetServices {
   Dio? dio;
@@ -64,24 +65,32 @@ class WorksheetServices {
   }
 
   // إرسال الإجابات
-  Future<bool> submitWorksheet(int worksheetId, WorksheetSubmitRequest request) async {
-    try {
-      final dio = await ApiClient.getDio();
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString("accessToken") ?? "";
+ Future<WorksheetSubmitResponse> submitWorksheet(
+  int worksheetId,
+  WorksheetSubmitRequest request,
+) async {
+  try {
+    final dio = await ApiClient.getDio();
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("accessToken") ?? "";
 
-      final response = await dio.post(
-        "/student/worksheet/$worksheetId/submit",
-        data: request.toJson(),
-        options: Options(
-          headers: {"Authorization": "Bearer $token"},
-        ),
-      );
+    final response = await dio.post(
+      "/student/worksheet/$worksheetId/submit",
+      data: request.toJson(),
+      options: Options(
+        headers: {"Authorization": "Bearer $token"},
+      ),
+    );
 
-      return response.statusCode == 200 && response.data['status'] == true;
-    } catch (e) {
-      print("Submit Worksheet error: $e");
-      return false;
+    if (response.statusCode == 200) {
+      return WorksheetSubmitResponse.fromJson(response.data);
+    } else {
+      throw Exception("Unexpected status code: ${response.statusCode}");
     }
+  } catch (e) {
+    print("Submit Worksheet error: $e");
+    throw Exception("Failed to submit worksheet");
   }
+}
+
 }

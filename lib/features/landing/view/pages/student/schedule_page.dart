@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telmeeth/core/api/controllers/schedual_controller.dart';
-import 'package:telmeeth/core/api/model/response/schedual_model.dart';
+import 'package:telmeeth/core/api/student/controllers/schedual_controller.dart';
+import 'package:telmeeth/core/api/student/model/response/schedual_model.dart';
 import 'package:telmeeth/core/widgets/student/custom_container1.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 import 'package:telmeeth/features/landing/view/pages/student/schedual_from_dialog.dart';
 import '../../../../../core/constants/responsive.dart';
-import '../../../../../core/widgets/student/container.dart';
 
 class SchedulePage extends StatefulWidget {
   const SchedulePage({super.key});

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/response/behavior_model.dart';
+import 'package:telmeeth/core/api/student/model/response/behavior_model.dart';
 
 class BehaviorServices {
   Future<BehaviorResponse?> getStudentBehaviors() async {
@@ -16,6 +16,7 @@ class BehaviorServices {
           headers: {"Authorization": "Bearer $token"},
         ),
       );
+      print("API RAW RESPONSE: ${response.data}");
 
       if (response.statusCode == 200) {
         return BehaviorResponse.fromJson(
@@ -25,6 +26,7 @@ class BehaviorServices {
       return null;
     } catch (e) {
       print("Behavior API error: $e");
+
       return null;
     }
   }

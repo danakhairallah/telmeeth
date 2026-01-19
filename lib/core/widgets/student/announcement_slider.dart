@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/api/controllers/announcement_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/announcement_controller.dart';
 
 class AnnouncementSlider extends StatefulWidget {
   const AnnouncementSlider({super.key});

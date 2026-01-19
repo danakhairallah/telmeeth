@@ -1,11 +1,11 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telmeeth/core/api/controllers/study_plan_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/study_plan_controller.dart';
+import 'package:telmeeth/core/api/student/model/request/study_plan_request.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/custom_container1.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
-import 'package:telmeeth/core/api/model/request/study_plan_request.dart';
 
 class StudyPlan extends StatefulWidget {
   const StudyPlan({super.key});
@@ -231,7 +231,7 @@ class _StudyPlanState extends State<StudyPlan> {
               );
               if (mounted) Navigator.pop(context);
               // بعد الإنشاء، إذا الاستجابة فيها ai_response أعرض ديالوج بنجاح
-              if (controller.response != null && controller.response!.aiResponse != null) {
+              if (controller.response != null) {
                 _showSuccessDialog(context, controller.response!);
               }
             },

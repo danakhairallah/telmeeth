@@ -1,16 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telmeeth/core/api/controllers/schedual_controller.dart';
-import 'package:telmeeth/core/api/model/request/schrdual_request.dart';
-import 'package:telmeeth/core/api/model/response/schedual_model.dart';
-import 'package:telmeeth/core/constants/responsive.dart';
-import 'package:telmeeth/core/widgets/student/app_primary_button.dart';
-import 'package:telmeeth/core/widgets/student/custom_container1.dart';
-import 'package:telmeeth/core/widgets/student/custom_textfiled.dart';
-import 'package:telmeeth/core/widgets/student/drawer.dart';
-import 'package:telmeeth/core/widgets/student/label_text.dart';
-import 'package:telmeeth/core/widgets/student/navigation.dart';
-import 'package:telmeeth/core/widgets/student/student_app_bar.dart';
+import 'package:telmeeth/core/api/student/model/response/schedual_model.dart';
 
 class ScheduleFormDialog extends StatefulWidget {
   final ScheduleModel? schedule;
@@ -113,7 +103,7 @@ class _ScheduleFormDialogState extends State<ScheduleFormDialog> {
                   ),
                   const SizedBox(height: 10),
                   DropdownButtonFormField<String>(
-                    value: status,
+                    initialValue: status,
                     items: ["pending", "in_progress", "completed"]
                         .map((s) => DropdownMenuItem(
                       value: s,

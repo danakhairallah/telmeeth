@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telmeeth/core/api/controllers/average_controller.dart';
-import 'package:telmeeth/core/api/controllers/mark_controller.dart';
-import 'package:telmeeth/core/api/controllers/score_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/average_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/mark_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/score_controller.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/container.dart';
 import 'package:telmeeth/core/widgets/student/custom_container1.dart';
 import 'package:telmeeth/core/widgets/student/score&grade.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 
-import '../../../../../core/widgets/student/drawer.dart';
-import '../../../../../core/widgets/student/navigation.dart';
-import '../../../../../core/widgets/student/student_app_bar.dart';
 
 class GradesResults extends StatefulWidget {
   const GradesResults({super.key});

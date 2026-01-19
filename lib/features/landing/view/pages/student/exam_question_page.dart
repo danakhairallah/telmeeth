@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telmeeth/core/api/controllers/exam_controller.dart';
-import 'package:telmeeth/core/api/model/request/answer_request.dart';
-import 'package:telmeeth/core/api/model/request/exam_request.dart';
+import 'package:telmeeth/core/api/student/controllers/exam_controller.dart';
+import 'package:telmeeth/core/api/student/model/request/answer_request.dart';
+import 'package:telmeeth/core/api/student/model/request/exam_request.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 
 class ExamQuestionsPage extends StatefulWidget {
@@ -143,30 +143,29 @@ class _ExamQuestionsPageState extends State<ExamQuestionsPage> {
                             SizedBox(height: context.h(0.7)),
                             if (q.type == "mcq" && q.options != null)
                               ...q.options!.map((opt) {
-                                final selected = answers[q.id] == opt;
+                              final selected = answers[q.id] == opt;
                                 return Container(
-                                  margin: EdgeInsets.only(bottom: context.h(0.5)),
-                                  decoration: BoxDecoration(
-                                    color: selected
-                                        ? Color(0xFFFFF2DD)
-                                        : Colors.transparent,
-                                    borderRadius:
-                                    BorderRadius.circular(context.h(0.8)),
-                                  ),
-                                  child: ListTile(
-                                    title: Text(opt),
-                                    leading: Radio<String>(
-                                      value: opt,
-                                      groupValue: answers[q.id],
-                                      onChanged: (val) {
-                                        setState(() {
-                                          answers[q.id!] = val;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
+                                margin: EdgeInsets.only(bottom: context.h(0.5)),
+                                decoration: BoxDecoration(
+                                color: selected ? const Color(0xFFFFF2DD) : Colors.transparent,
+                                borderRadius: BorderRadius.circular(context.h(0.8)),
+                                ),
+                                child: ListTile(
+                                title: Text(opt),
+                                leading: Radio<String>(
+                                value: opt,
+                                groupValue: answers[q.id],
+                                onChanged: (val) {
+                                if (q.id == null) return; // تأكد من id
+                                    setState(() {
+                                    answers[q.id!] = val!;
+                                    });
+                                },
+                                ),
+                              ),
+                            );
+                          }).toList(),
+
                             if (q.type == "essay")
                               TextField(
                                 maxLines: 4,

@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/request/schrdual_request.dart';
-import 'package:telmeeth/core/api/model/response/schedual_model.dart';
-import 'package:telmeeth/core/api/model/response/schedual_response.dart';
+import 'package:telmeeth/core/api/student/model/request/schrdual_request.dart';
+import 'package:telmeeth/core/api/student/model/response/schedual_model.dart';
+import 'package:telmeeth/core/api/student/model/response/schedual_response.dart';
+
 
 class SchedualServices {
   Dio? dio;

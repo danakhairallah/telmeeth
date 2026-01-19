@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/response/api_response.dart';
-import 'package:telmeeth/core/api/model/response/user.dart';
+import 'package:telmeeth/core/api/student/model/response/api_response.dart';
+import 'package:telmeeth/core/api/student/model/response/auth.dart';
 
 class AuthServices {
   Dio? dio;
@@ -33,7 +33,7 @@ class AuthServices {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString("accessToken", token);
 
-        User user = User.fromJson(userJson);
+        User user = User.fromJson(userJson , token: token);
 
         return ApiResponse(
           data: user,

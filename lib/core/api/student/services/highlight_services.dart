@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/request/highlight_request.dart';
-import 'package:telmeeth/core/api/model/response/highlight_data.dart';
-import 'package:telmeeth/core/api/model/response/highlight_model.dart';
+import 'package:telmeeth/core/api/student/model/request/highlight_request.dart' show HighlightRequest;
+import 'package:telmeeth/core/api/student/model/response/highlight_data.dart';
+import 'package:telmeeth/core/api/student/model/response/highlight_model.dart';
 
 class HighlightServices {
   Dio? dio;

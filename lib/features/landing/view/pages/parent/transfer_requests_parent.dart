@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:telmeeth/core/api/parent/controllers/transfer_controller.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
-import '../../../../../core/widgets/parent/features_app_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:telmeeth/core/widgets/parent/features_app_bar.dart';
+import 'package:telmeeth/core/api/parent/model/response/transfer_model.dart' as transfer;
 
 class TransferRequestsParent extends StatefulWidget {
   const TransferRequestsParent({super.key});
@@ -10,15 +13,13 @@ class TransferRequestsParent extends StatefulWidget {
 }
 
 class _TransferRequestsParentState extends State<TransferRequestsParent> {
-  List<Map<String, dynamic>> requests = [
-    {
-      "student": "2",
-      "type": "Internal (Class/Section)",
-      "target": "transferRequests.branchId: 3",
-      "date": "2025-12-21",
-      "status": "rejected",
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<TransferController>(context, listen: false).getTransfers();
+    });
+  }
 
   // Dialog controllers
   final _childCtrl = TextEditingController();
@@ -58,7 +59,7 @@ class _TransferRequestsParentState extends State<TransferRequestsParent> {
                 SizedBox(height: context.h(0.7)),
                 TextField(
                   controller: _childCtrl,
-                  style: TextStyle(fontSize: context.font(3.7)),
+                  style: TextStyle(fontSize: context.font(11.7)),
                   decoration: _dialogInputDecoration("Select Child"),
                 ),
                 SizedBox(height: context.h(2)),
@@ -67,7 +68,7 @@ class _TransferRequestsParentState extends State<TransferRequestsParent> {
                 Text("Transfer Type", style: _dialogLabelStyle(context)),
                 SizedBox(height: context.h(0.7)),
                 DropdownButtonFormField<String>(
-                  value: _typeCtrl.text,
+                  value: _typeCtrl.text, // Use value (not initialValue) with TextEditingController
                   items: [
                     "Internal (Class/Section)",
                     "External (School)",
@@ -84,7 +85,7 @@ class _TransferRequestsParentState extends State<TransferRequestsParent> {
                 SizedBox(height: context.h(0.7)),
                 TextField(
                   controller: _targetCtrl,
-                  style: TextStyle(fontSize: context.font(3.7)),
+                  style: TextStyle(fontSize: context.font(11.7)),
                   decoration: _dialogInputDecoration("Enter Target School / branchId"),
                 ),
                 SizedBox(height: context.h(2)),
@@ -144,26 +145,38 @@ class _TransferRequestsParentState extends State<TransferRequestsParent> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_childCtrl.text.isNotEmpty &&
                           _typeCtrl.text.isNotEmpty &&
                           _targetCtrl.text.isNotEmpty &&
                           _selectedDate != null) {
-                        setState(() {
-                          requests.add({
-                            "student": _childCtrl.text,
-                            "type": _typeCtrl.text,
-                            "target": _targetCtrl.text,
-                            "date": "${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}",
-                            "status": "pending",
-                          });
-                        });
-                        Navigator.pop(context);
-                        // Reset fields
-                        _childCtrl.clear();
-                        _typeCtrl.text = "Internal (Class/Section)";
-                        _targetCtrl.clear();
-                        _selectedDate = null;
+                        // مثال: تحويل النصوص لأرقام حسب المطلوب من الـAPI
+                        int studentId = int.tryParse(_childCtrl.text) ?? 0; // غيّر حسب المطلوب
+                        int branchId = int.tryParse(_targetCtrl.text) ?? 0; // غيّر حسب المطلوب
+
+                        // فورمات التاريخ
+                        String dateStr = "${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}";
+
+                        final transferController = Provider.of<TransferController>(context, listen: false);
+
+                        bool success = await transferController.addTransferRequest(
+                          studentId: studentId,
+                          branchId: branchId,
+                          type: _typeCtrl.text,
+                          date: dateStr,
+                        );
+
+                        if (success) {
+                          Navigator.pop(context);
+                          _childCtrl.clear();
+                          _typeCtrl.text = "Internal (Class/Section)";
+                          _targetCtrl.clear();
+                          _selectedDate = null;
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("فشل إرسال الطلب. حاول مجددًا.")),
+                          );
+                        }
                       }
                     },
                     child: Text(
@@ -188,11 +201,17 @@ class _TransferRequestsParentState extends State<TransferRequestsParent> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final isMobile = width < 600;
+    final transferController = Provider.of<TransferController>(context);
+    final requests = transferController.transferModel?.data ?? [];
 
     return Scaffold(
       appBar: const FeaturesAppBar(),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
+      body: transferController.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : transferController.error != null
+          ? Center(child: Text(transferController.error!))
+          : SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: isMobile ? context.w(4) : context.w(8),
@@ -228,13 +247,14 @@ class _TransferRequestsParentState extends State<TransferRequestsParent> {
                   ),
                   ElevatedButton.icon(
                     onPressed: _openCreateDialog,
-                    icon: const Icon(Icons.add, size: 22,  color: Colors.white, ),
-                    label: const Text("Create Request", style: TextStyle( color: Colors.white, fontWeight: FontWeight.w500),),
+                    icon: const Icon(Icons.add, size: 15,  color: Colors.white, ),
+                    label: const Text("Create Request", style: TextStyle( color: Colors.white, fontWeight: FontWeight.w500, fontSize: 12),),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF8C00),
                       padding: EdgeInsets.symmetric(
-                        horizontal: context.w(4.5),
+                        horizontal: context.w(2.8),
                         vertical: context.h(1.5),
+
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -247,17 +267,35 @@ class _TransferRequestsParentState extends State<TransferRequestsParent> {
               SizedBox(height: context.h(3.5)),
 
               /// Stats Cards
-              Wrap(
-                spacing: context.w(3),
-                runSpacing: context.h(2),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _statCard(context, title: "Total Records", value: "${requests.length}"),
-                  _statCard(context, title: "Pending", value: "${requests.where((e) => e['status'] == 'pending').length}",
-                      badgeText: "Pending", badgeColor: Color(0xFFFFF7ED), badgeTextColor: Color(0xFFF59E0B)),
-                  _statCard(context, title: "Completed", value: "${requests.where((e) => e['status'] == 'completed').length}",
-                      badgeText: "Completed", badgeColor: Color(0xFFECFDF3), badgeTextColor: Color(0xFF16A34A)),
+                  Expanded(
+                    child: _statCard(
+                      context,
+                      title: "Total Records",
+                      value: "${requests.length}",
+                    ),
+                  ),
+                  SizedBox(width: context.w(2)),
+                  Expanded(
+                    child: _statCard(
+                      context,
+                      title: "Pending",
+                      value: "${requests.where((e) => e.status == 'pending').length}",
+                    ),
+                  ),
+                  SizedBox(width: context.w(2)),
+                  Expanded(
+                    child: _statCard(
+                      context,
+                      title: "Completed",
+                      value: "${requests.where((e) => e.status == 'completed').length}",
+                    ),
+                  ),
                 ],
               ),
+
 
               SizedBox(height: context.h(4)),
 
@@ -290,18 +328,12 @@ class _TransferRequestsParentState extends State<TransferRequestsParent> {
 
                     SizedBox(height: context.h(3)),
 
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: SizedBox(
-                        width: 900, // min table width
-                        child: Column(
-                          children: [
-                            _tableHeader(context),
-                            Divider(color: Colors.grey.shade300),
-                            ...requests.map((req) => _tableRow(context, req)).toList(),
-                          ],
-                        ),
-                      ),
+                    Column(
+                      children: [
+                        _tableHeader(context),
+                        Divider(color: Colors.grey.shade300),
+                        ...requests.map((req) => _tableRow(context, req)),
+                      ],
                     ),
                   ],
                 ),
@@ -312,58 +344,46 @@ class _TransferRequestsParentState extends State<TransferRequestsParent> {
       ),
     );
   }
-
-
   Widget _statCard(BuildContext context, {
     required String title,
     required String value,
-    String? badgeText,
-    Color? badgeColor,
-    Color? badgeTextColor,
   }) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-
     return Container(
-      width: isMobile ? double.infinity : context.w(26),
-      padding: EdgeInsets.all(context.h(2.2)),
+      height: 88,
+      margin: EdgeInsets.symmetric(vertical: 2),
+      padding: EdgeInsets.all(context.w(3)),
       decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Color(0xFFE5E9F2)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-              if (badgeText != null)
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: badgeColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    badgeText,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: badgeTextColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-            ],
+          Text(
+            title,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 11,
+              color: Colors.blueGrey[700],
+            ),
           ),
-          SizedBox(height: context.h(1.6)),
+          SizedBox(height: 8),
           Text(
             value,
             style: TextStyle(
-              fontSize: context.font(17),
+              fontSize: 15,
               fontWeight: FontWeight.bold,
+              color: Colors.blueGrey[900],
+              letterSpacing: 1.2,
             ),
           ),
         ],
@@ -371,11 +391,10 @@ class _TransferRequestsParentState extends State<TransferRequestsParent> {
     );
   }
 
-
   Widget _tableHeader(BuildContext context) {
     return Row(
       children: [
-        _tableHeaderCell("Student Name", flex: 2),
+        _tableHeaderCell(" Name", flex: 2),
         _tableHeaderCell("Transfer Type", flex: 3),
         _tableHeaderCell("Target School", flex: 3),
         _tableHeaderCell("Date", flex: 2),
@@ -391,22 +410,20 @@ class _TransferRequestsParentState extends State<TransferRequestsParent> {
         text,
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 16,
+          fontSize: 10,
           color: Colors.grey[800],
         ),
       ),
     );
   }
 
-  Widget _tableRow(BuildContext context, Map<String, dynamic> req) {
+  Widget _tableRow(BuildContext context, transfer.Data req) {
     Color statusColor;
-    String statusText = req['status'];
+    String statusText = req.status ?? '';
     if (statusText == 'completed') {
       statusColor = Color(0xFF16A34A);
-      statusText = "completed";
     } else if (statusText == 'pending') {
       statusColor = Color(0xFFF59E0B);
-      statusText = "pending";
     } else {
       statusColor = Color(0xFFEF4444);
       statusText = "rejected";
@@ -415,19 +432,19 @@ class _TransferRequestsParentState extends State<TransferRequestsParent> {
       padding: EdgeInsets.symmetric(vertical: context.h(1.6)),
       child: Row(
         children: [
-          Expanded(flex: 2, child: Text(req['student'].toString())),
+          Expanded(flex: 2, child: Text(req.studentId?.toString() ?? "-")),
           Expanded(
             flex: 3,
             child: Row(
               children: [
                 Icon(Icons.school, size: 20, color: Colors.blue[700]),
                 SizedBox(width: 8),
-                Flexible(child: Text(req['type'].toString(), style: TextStyle(fontSize: 16))),
+                Flexible(child: Text(req.type ?? "", style: TextStyle(fontSize: 16))),
               ],
             ),
           ),
-          Expanded(flex: 3, child: Text(req['target'].toString(), style: TextStyle(fontSize: 16))),
-          Expanded(flex: 2, child: Text(req['date'].toString(), style: TextStyle(fontSize: 16))),
+          Expanded(flex: 3, child: Text(req.branchId?.toString() ?? "", style: TextStyle(fontSize: 16))),
+          Expanded(flex: 2, child: Text(req.date ?? "", style: TextStyle(fontSize: 16))),
           Expanded(
             flex: 2,
             child: Container(
@@ -466,4 +483,14 @@ class _TransferRequestsParentState extends State<TransferRequestsParent> {
     fillColor: Colors.grey[100],
     hintStyle: TextStyle(fontSize: 11, color: Colors.grey[500]),
   );
+
+  @override
+  void dispose() {
+    _childCtrl.dispose();
+    _typeCtrl.dispose();
+    _targetCtrl.dispose();
+    super.dispose();
+  }
 }
+
+

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:telmeeth/core/api/controllers/subject_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/subject_controller.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 import 'package:telmeeth/features/landing/view/pages/student/uints_page.dart';
 import '../../../../../core/constants/responsive.dart';
 import '../../../../../core/widgets/student/container.dart';
 import '../../../../../core/widgets/student/custom_container1.dart';
-import '../../../../../core/widgets/student/drawer.dart';
-import '../../../../../core/widgets/student/navigation.dart';
-import '../../../../../core/widgets/student/student_app_bar.dart';
 import 'package:provider/provider.dart';
 
 class Materials extends StatefulWidget {
@@ -239,7 +236,7 @@ class _MaterialsState extends State<Materials> {
                           ],
                         ),
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),

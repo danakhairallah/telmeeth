@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:telmeeth/core/api/controllers/profile_controller.dart';
-import 'package:telmeeth/core/api/model/request/update_profile_requect.dart';
-import 'package:telmeeth/core/api/model/response/profile_data.dart';
+import 'package:telmeeth/core/api/student/controllers/profile_controller.dart';
+import 'package:telmeeth/core/api/student/model/request/update_profile_requect.dart';
+import 'package:telmeeth/core/api/student/model/response/profile_data.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
-import 'package:telmeeth/core/widgets/student/drawer.dart';
-import 'package:telmeeth/core/widgets/student/student_app_bar.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
-import '../../../../../core/widgets/student/navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:telmeeth/features/landing/view/pages/student/complet_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -24,7 +22,6 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    // جلب بيانات البروفايل عند فتح الصفحة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProfileController>().getStudentProfile();
     });
@@ -127,7 +124,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            onPressed: () {},
+            onPressed: () {  Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CompleteProfilePage()),
+            );},
           ),
         ],
       ),

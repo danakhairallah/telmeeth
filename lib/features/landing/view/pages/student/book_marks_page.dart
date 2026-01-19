@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telmeeth/core/api/controllers/highlight_controller.dart';
-import 'package:telmeeth/core/api/model/request/highlight_request.dart';
-import 'package:telmeeth/core/api/model/response/highlight_data.dart';
+import 'package:telmeeth/core/api/student/controllers/highlight_controller.dart';
+import 'package:telmeeth/core/api/student/model/request/highlight_request.dart';
+import 'package:telmeeth/core/api/student/model/response/highlight_data.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 
@@ -154,7 +154,7 @@ class _BookMarksState extends State<BookMarks> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const StudentFeaturesAppBar(),
-      backgroundColor: const Color(0xFFF7F1E9E0),
+      backgroundColor: const Color(0xfff7f1e9e0),
       body: Consumer<HighlightController>(
         builder: (context, controller, _) {
           if (controller.isLoading) {

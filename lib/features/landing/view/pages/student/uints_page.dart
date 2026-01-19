@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telmeeth/core/api/controllers/lessons_controller.dart';
-import 'package:telmeeth/core/api/controllers/unit_controller.dart';
-import 'package:telmeeth/core/api/model/response/unite_model.dart';
+import 'package:telmeeth/core/api/student/controllers/lessons_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/unit_controller.dart';
+import 'package:telmeeth/core/api/student/model/response/unite_model.dart';
 import 'package:telmeeth/features/landing/view/pages/student/book_marks_page.dart';
 import 'package:telmeeth/features/landing/view/pages/student/notes_page.dart';
 // Replace with your custom AppBar if needed

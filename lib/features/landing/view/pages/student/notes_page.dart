@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telmeeth/core/api/controllers/note_controller.dart';
-import 'package:telmeeth/core/api/model/request/nots_request.dart';
-import 'package:telmeeth/core/api/model/response/note_model.dart';
+import 'package:telmeeth/core/api/student/controllers/note_controller.dart';
+import 'package:telmeeth/core/api/student/model/request/nots_request.dart';
+import 'package:telmeeth/core/api/student/model/response/note_model.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
-import '../../../../../core/widgets/student/drawer.dart';
-import '../../../../../core/widgets/student/navigation.dart';
-import '../../../../../core/widgets/student/student_app_bar.dart';
 
 class NotesPage extends StatefulWidget {
   final int lessonId;

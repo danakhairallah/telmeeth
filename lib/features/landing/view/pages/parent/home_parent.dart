@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:telmeeth/core/api/parent/controllers/parent_announcement_controller.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/features/landing/view/pages/parent/ai_assistant_parent.dart';
 import 'package:telmeeth/features/landing/view/pages/parent/announcements_parent.dart';
@@ -25,119 +27,156 @@ class _HomeParentState extends State<HomeParent> {
     FeatureModel(
       title: 'My Children',
       image: 'assets/image/feature_sample.png',
-      page: const MyChildrenParent(),
+      page: MyChildrenPage(),
     ),
     FeatureModel(
       title: 'Motivational Messages',
       image: 'assets/image/feature_sample.png',
-      page: const MotivationalMessagesParent(),
+      page: MotivationalMessagesParent(),
     ),
     FeatureModel(
-      title: 'Transfer Requests', // صححت الاسم
+      title: 'Transfer Requests',
       image: 'assets/image/feature_sample.png',
-      page: const TransferRequestsParent(), // صححت الاسم
+      page: TransferRequestsParent(),
     ),
     FeatureModel(
       title: 'Discounts',
       image: 'assets/image/feature_sample.png',
-      page: const DiscountsParent(),
+      page: DiscountsParent(),
     ),
     FeatureModel(
       title: 'Announcements',
       image: 'assets/image/feature_sample.png',
-      page: const AnnouncementsParent(),
+      page: AnnouncementsParent(),
     ),
     FeatureModel(
       title: 'AI Assistant',
       image: 'assets/image/feature_sample.png',
-      page: const AiAssistantParent(),
+      page: AiAssistantParent(),
     ),
     FeatureModel(
       title: 'Communities',
       image: 'assets/image/feature_sample.png',
-      page: const CommunitiesParent(),
+      page: CommunitiesParent(),
     ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // عدّل هنا لاحقاً إذا API فيها جلب للكل
+      Provider.of<ParentAnnouncementController>(context, listen: false)
+          .loadAnnouncement(1);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const ParentAppBar(),
-
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: context.h(2.5)),
 
-            SizedBox(
-              height: context.h(22),
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: 3,
-                onPageChanged: (index) {
-                  setState(() => _currentPage = index);
-                },
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: context.w(4)),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        image: const DecorationImage(
-                          image: AssetImage('assets/image/ad_sample.jpg'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.6),
-                              Colors.transparent,
-                            ],
+            // ==== PageView إعلانات المدرسة ====
+            Consumer<ParentAnnouncementController>(
+              builder: (context, announcementController, _) {
+                if (announcementController.isLoading) {
+                  return SizedBox(
+                    height: context.h(22),
+                    child: const Center(child: CircularProgressIndicator()),
+                  );
+                }
+                if (announcementController.errorMessage != null) {
+                  return SizedBox(
+                    height: context.h(22),
+                    child: Center(child: Text(announcementController.errorMessage!)),
+                  );
+                }
+
+                final data = announcementController.response?.data ?? [];
+
+                return SizedBox(
+                  height: context.h(22),
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: data.isNotEmpty ? data.length : 1,
+                    onPageChanged: (index) {
+                      setState(() => _currentPage = index);
+                    },
+                    itemBuilder: (context, index) {
+                      final announcement = data.isNotEmpty ? data[index] : null;
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: context.w(4)),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            image: const DecorationImage(
+                              image: AssetImage('assets/image/ad_sample.jpg'),
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                        child: const Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Text(
-                            'New Updates for Your Child 🎉',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [
+                                  Colors.black.withOpacity(0.6),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                            child: Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Text(
+                                announcement?.title != null && announcement?.title != ""
+                                    ? (announcement!.title!)
+                                    : 'No Announcements Yet!',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                },
-              ),
+                      );
+                    },
+                  ),
+                );
+              },
             ),
 
             SizedBox(height: context.h(1.5)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                3,
-                (index) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  height: 8,
-                  width: _currentPage == index ? 18 : 8,
-                  decoration: BoxDecoration(
-                    color: _currentPage == index
-                        ? Colors.orange
-                        : Colors.grey.shade400,
-                    borderRadius: BorderRadius.circular(10),
+            Consumer<ParentAnnouncementController>(
+              builder: (context, announcementController, _) {
+                final data = announcementController.response?.data ?? [];
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    data.isNotEmpty ? data.length : 1,
+                        (index) => AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      height: 8,
+                      width: _currentPage == index ? 18 : 8,
+                      decoration: BoxDecoration(
+                        color: _currentPage == index
+                            ? Colors.orange
+                            : Colors.grey.shade400,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
 
             SizedBox(height: context.h(3)),
@@ -323,7 +362,6 @@ class _HomeInfoBox extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(width: 8),
           Icon(icon, size: 24, color: Colors.orange),
         ],

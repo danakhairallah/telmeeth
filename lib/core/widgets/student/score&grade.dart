@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telmeeth/core/api/controllers/mark_controller.dart';
-import 'package:telmeeth/core/api/controllers/score_controller.dart';
-import 'package:telmeeth/core/api/model/response/score_model.dart';
+import 'package:telmeeth/core/api/student/controllers/mark_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/score_controller.dart';
+import 'package:telmeeth/core/api/student/model/response/score_model.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 class MarksScoresPage extends StatefulWidget {
   const MarksScoresPage({super.key});

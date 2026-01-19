@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/request/study_plan_request.dart';
-import 'package:telmeeth/core/api/model/response/study_plan_response.dart';
-import 'package:telmeeth/core/api/model/response/study_plan_model.dart';
+import 'package:telmeeth/core/api/student/model/request/study_plan_request.dart';
+import 'package:telmeeth/core/api/student/model/response/study_plan_model.dart';
+import 'package:telmeeth/core/api/student/model/response/study_plan_response.dart';
 
 class StudyPlanService {
   /// CREATE

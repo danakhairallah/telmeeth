@@ -1,12 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/request/exam_request.dart';
-import 'package:telmeeth/core/api/model/response/exam_aq.dart';
-import 'package:telmeeth/core/api/model/response/exam_data.dart';
-import 'package:telmeeth/core/api/model/response/exam_model.dart';
-import 'package:telmeeth/core/api/model/response/exam_resuilt.dart';
-import 'package:telmeeth/core/api/model/response/submit_exam_response.dart';
+import 'package:telmeeth/core/api/student/model/request/exam_request.dart';
+import 'package:telmeeth/core/api/student/model/response/exam_aq.dart';
+import 'package:telmeeth/core/api/student/model/response/exam_model.dart';
+import 'package:telmeeth/core/api/student/model/response/exam_resuilt.dart';
+import 'package:telmeeth/core/api/student/model/response/submit_exam_response.dart';
 
 class ExamServices {
   // ================= GET EXAMS =================

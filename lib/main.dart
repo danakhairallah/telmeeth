@@ -1,59 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telmeeth/core/api/controllers/ai_report_controller.dart';
-import 'package:telmeeth/core/api/controllers/announcement_controller.dart';
-import 'package:telmeeth/core/api/controllers/attendance_controller.dart';
-import 'package:telmeeth/core/api/controllers/auth_controller.dart';
-import 'package:telmeeth/core/api/controllers/average_controller.dart';
-import 'package:telmeeth/core/api/controllers/behavior_controller.dart';
-import 'package:telmeeth/core/api/controllers/exam_controller.dart';
-import 'package:telmeeth/core/api/controllers/highlight_controller.dart';
-import 'package:telmeeth/core/api/controllers/lessons_controller.dart';
-import 'package:telmeeth/core/api/controllers/mark_controller.dart';
-import 'package:telmeeth/core/api/controllers/note_controller.dart';
-import 'package:telmeeth/core/api/controllers/profile_controller.dart';
-import 'package:telmeeth/core/api/controllers/schedual_controller.dart';
-import 'package:telmeeth/core/api/controllers/score_controller.dart';
-import 'package:telmeeth/core/api/controllers/study_plan_controller.dart';
-import 'package:telmeeth/core/api/controllers/subject_controller.dart';
-import 'package:telmeeth/core/api/controllers/task_controller.dart';
-import 'package:telmeeth/core/api/controllers/time_table_controller.dart';
-import 'package:telmeeth/core/api/controllers/unit_controller.dart';
-import 'package:telmeeth/core/api/controllers/website_activity_controller.dart';
-import 'package:telmeeth/core/api/controllers/worksheet_controller.dart';
-import 'package:telmeeth/features/landing/view/pages/landing/ai_tools_page.dart';
-import 'package:telmeeth/features/landing/view/pages/landing/our_schools_page.dart';
-import 'package:telmeeth/features/landing/view/pages/landing/stories_page.dart';
-import 'package:telmeeth/features/landing/view/pages/login/login_page.dart';
-import 'package:telmeeth/features/landing/view/pages/student/attachments_page.dart';
-import 'package:telmeeth/features/landing/view/pages/student/attendance_page.dart';
-import 'package:telmeeth/features/landing/view/pages/student/book_marks_page.dart';
-import 'package:telmeeth/features/landing/view/pages/student/class_schedule_page.dart';
-import 'package:telmeeth/features/landing/view/pages/student/exams_page.dart';
-import 'package:telmeeth/features/landing/view/pages/student/grades_results_page.dart';
-import 'package:telmeeth/features/landing/view/pages/student/live_lessons_page.dart';
-import 'package:telmeeth/features/landing/view/pages/student/materials_page.dart';
-import 'package:telmeeth/features/landing/view/pages/student/student_file_page.dart';
-import 'package:telmeeth/features/landing/view/pages/student/study_plan_page.dart';
-import 'package:telmeeth/features/landing/view/pages/student/tasks_page.dart';
-import 'package:telmeeth/features/landing/view/pages/student/work_sheets_page.dart';
-import 'core/api/controllers/ai_advice_controller.dart';
-import 'core/api/controllers/ai_message_controller.dart';
-import 'core/theme/app_theme.dart';
-import 'features/landing/view/landing_page.dart';
-import 'features/landing/view/pages/student/home_student.dart';
-import 'features/landing/view/pages/student/profile_page.dart';
+import 'package:dio/dio.dart';
+
+import 'package:telmeeth/core/api/api_client.dart';
+import 'package:telmeeth/core/api/parent/controllers/branches_controllers.dart';
+import 'package:telmeeth/core/api/parent/controllers/fees_controllers.dart';
+import 'package:telmeeth/core/api/parent/controllers/my_children_controller.dart';
+import 'package:telmeeth/core/api/parent/controllers/parent_exam_controller.dart';
+import 'package:telmeeth/core/api/parent/controllers/school_controller.dart';
+import 'package:telmeeth/core/api/parent/controllers/student_controller.dart';
+import 'package:telmeeth/core/api/parent/controllers/teacher_report_controller.dart';
+import 'package:telmeeth/core/api/parent/controllers/time_table_controller.dart';
+import 'package:telmeeth/core/api/parent/controllers/walking_time_controller.dart';
+import 'package:telmeeth/core/api/parent/services/student_service.dart';
+
+// ===== Student Controllers =====
+import 'package:telmeeth/core/api/student/controllers/auth_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/attendance_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/website_activity_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/profile_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/highlight_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/ai_message_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/ai_advice_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/ai_report_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/study_plan_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/exam_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/worksheet_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/task_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/subject_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/schedual_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/time_table_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/announcement_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/unit_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/lessons_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/note_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/mark_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/score_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/average_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/behavior_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/report_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/student_messages_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/chatbot_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/bus_details_controller.dart';
+
+// ===== Parent Controllers =====
+import 'package:telmeeth/core/api/parent/controllers/transfer_controller.dart';
+import 'package:telmeeth/core/api/parent/controllers/parent_profile_controller.dart';
+import 'package:telmeeth/core/api/parent/controllers/ai_chat_parent_controller.dart';
+import 'package:telmeeth/core/api/parent/controllers/parent_announcement_controller.dart';
+import 'package:telmeeth/core/api/parent/controllers/discounts_controller.dart';
+import 'package:telmeeth/core/api/parent/controllers/motivational_messages_controller.dart';
+
+// ===== Parent Services =====
+import 'package:telmeeth/core/api/parent/services/motivational_messages_service.dart';
+import 'package:telmeeth/core/api/teacher/controllers/announcement_controller_teacher.dart';
+import 'package:telmeeth/core/api/teacher/controllers/chatbot_controller_teacher.dart';
+import 'package:telmeeth/core/api/teacher/controllers/teacher_motivational_message_controller.dart';
+import 'package:telmeeth/core/api/teacher/service/teacher_motivational_message_service.dart';
+
+// ===== App =====
 import 'features/landing/view/splash_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final Dio dio = await ApiClient.getDio();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthController()),
+
+        // ================= TEACHER PORTAL =================
+        ChangeNotifierProvider(create: (_) => TeacherChatbotController()),
         ChangeNotifierProvider(
-          create: (_) => AttendanceController(),
-          child: Attendance(),
+            create: (_) => MotivationMessageControllerTeacher(MotivationMessageServiceTeacher())
         ),
+        ChangeNotifierProvider(create: (_) => AnnouncementControllerTeacher()),
+
+
+        // ================= STUDENT PORTAL =================
+        ChangeNotifierProvider(create: (_) => AuthController()),
+        ChangeNotifierProvider(create: (_) => AttendanceController()),
         ChangeNotifierProvider(create: (_) => WebsiteActivityController()),
         ChangeNotifierProvider(create: (_) => ProfileController()),
         ChangeNotifierProvider(create: (_) => HighlightController()),
@@ -75,10 +102,38 @@ void main() {
         ChangeNotifierProvider(create: (_) => ScoreController()),
         ChangeNotifierProvider(create: (_) => AverageController()),
         ChangeNotifierProvider(create: (_) => BehaviorController()),
+        ChangeNotifierProvider(create: (_) => ReportController()),
+        ChangeNotifierProvider(create: (_) => StudentMessagesController()),
+        ChangeNotifierProvider(create: (_) => ChatbotController()),
+        ChangeNotifierProvider(create: (_) => BusDetailsController()),
+
+        // ================= PARENT PORTAL =================
+        ChangeNotifierProvider(create: (_) => TransferController()),
+        ChangeNotifierProvider(create: (_) => ProfileParentController()),
+        ChangeNotifierProvider(create: (_) => AiChatParentController()),
+        ChangeNotifierProvider(create: (_) => ParentAnnouncementController()),
+        ChangeNotifierProvider(create: (_) => DiscountsController()),
+        ChangeNotifierProvider(create: (_) => FeesController()),
+        ChangeNotifierProvider(create: (_) => MyChildrenController()),
+        ChangeNotifierProvider(create: (_) => TimeTableControllerParent()),
+        ChangeNotifierProvider(create: (_) => ParentExamController()),
+        ChangeNotifierProvider(create: (_) => TeacherReportController()),
+        ChangeNotifierProvider(create: (_) => SchoolController()),
+        ChangeNotifierProvider(create: (_) => BranchesController()),
+        ChangeNotifierProvider(
+          create: (_) => StudentController(StudentService(dio))),
+        Provider<MotivationalMessagesService>(
+          create: (_) => MotivationalMessagesService(dio)),
+        ChangeNotifierProvider<MotivationalMessagesController>(
+          create: (context) => MotivationalMessagesController(
+            context.read<MotivationalMessagesService>(),
+            StudentService(dio)),
 
 
+
+        ),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -95,7 +150,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.grey[200],
       ),
-      home: SplashPage(),
+      home: const SplashPage(),
     );
   }
 }

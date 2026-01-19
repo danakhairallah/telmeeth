@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:telmeeth/core/api/parent/controllers/parent_profile_controller.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/parent/features_app_bar.dart';
-import 'edit_profile_parent.dart'; // تأكد من الاستيراد الصحيح
+import 'edit_profile_parent.dart';
+import 'package:telmeeth/core/api/parent/model/request/profile_parent_update_request.dart';
 
 class ProfileParent extends StatefulWidget {
   const ProfileParent({super.key});
@@ -11,16 +14,33 @@ class ProfileParent extends StatefulWidget {
 }
 
 class _ProfileParentState extends State<ProfileParent> {
-  // المتغيرات اللي راح تعدلها
-  String altNumber = "-";
-  String phone = "0502345678";
-  String email = "parent2@example.com";
-  String address = "King Abdullah Street – Amman";
-  String location = "https://maps.app.goo.gl/FCCZjfZh42cp914MA";
-
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      Provider.of<ProfileParentController>(
+        context,
+        listen: false,
+      ).getParentProfile();
+    });
+  }
   Widget build(BuildContext context) {
     final Color mainColor =  Colors.black;
+    final controller = Provider.of<ProfileParentController>(context);
+
+    if (controller.isLoading) {
+      return Scaffold(
+        appBar: FeaturesAppBar(),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (controller.errorMessage != null) {
+      return Scaffold(
+        appBar: FeaturesAppBar(),
+        body: Center(child: Text(controller.errorMessage!)),
+      );
+    }
+    final data = controller.parentProfile?.data;
 
     return Scaffold(
       appBar: FeaturesAppBar(),
@@ -50,35 +70,44 @@ class _ProfileParentState extends State<ProfileParent> {
                   color: Colors.grey[700],
                 ),
               ),
-
               SizedBox(height: context.h(2)),
-
-              /// ===== EDIT BUTTON =====
               Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
                   onPressed: () async {
-                    // انتقل لصفحة التعديل وانتظر البيانات
+                    if (data == null) return;
                     final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => EditProfileParent(
-                          altNumber: altNumber,
-                          phone: phone,
-                          email: email,
-                          address: address,
-                          location: location,
+                          altNumber: data.alternateNumber ?? "",
+                          phone: data.phoneNumber ?? "",
+                          email: data.email ?? "",
+                          address: data.address ?? "",
+                          location: data.location ?? "",
                         ),
                       ),
                     );
+                    // عند الرجوع من صفحة التعديل
                     if (result != null && result is Map) {
-                      setState(() {
-                        altNumber = result['altNumber'] ?? altNumber;
-                        phone = result['phone'] ?? phone;
-                        email = result['email'] ?? email;
-                        address = result['address'] ?? address;
-                        location = result['location'] ?? location;
-                      });
+                      // اعمل تحديث للبيانات
+                      await controller.updateParentProfile(
+                        ProfileParentUpdateRequest(
+                          email: result['email'],
+                          address: result['address'],
+                          location: result['location'],
+                          alternateNumber: result['altNumber'],
+                        ),
+                      );
+                      // أعد تحميل البروفايل من جديد بعد التحديث
+                      await controller.getParentProfile();
+
+                      // خيار: إظهار إشعار نجاح
+                      if (context.mounted && controller.updateResponse?.success == true) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('تم تحديث الملف بنجاح!')),
+                        );
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -101,9 +130,7 @@ class _ProfileParentState extends State<ProfileParent> {
                   ),
                 ),
               ),
-
               SizedBox(height: context.h(2)),
-
               /// ===== PROFILE CARD =====
               Expanded(
                 child: Container(
@@ -124,7 +151,9 @@ class _ProfileParentState extends State<ProfileParent> {
                     ],
                   ),
                   child: SingleChildScrollView(
-                    child: Column(
+                    child: data == null
+                        ? Center(child: Text("No Data Available"))
+                        : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -136,11 +165,11 @@ class _ProfileParentState extends State<ProfileParent> {
                           ),
                         ),
                         SizedBox(height: context.h(1.5)),
-                        _item(context, 'Alternate Number', altNumber),
-                        _item(context, 'Phone Number', phone),
-                        _item(context, 'Email', email),
-                        _item(context, 'Address', address),
-                        _item(context, 'Location (URL)', location, isLink: true),
+                        _item(context, 'Alternate Number', data.alternateNumber ?? "-"),
+                        _item(context, 'Phone Number', data.phoneNumber ?? "-"),
+                        _item(context, 'Email', data.email ?? "-"),
+                        _item(context, 'Address', data.address ?? "-"),
+                        _item(context, 'Location (URL)', data.location ?? "-", isLink: true),
                       ],
                     ),
                   ),

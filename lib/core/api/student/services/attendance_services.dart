@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/response/attendance.dart';
+import 'package:telmeeth/core/api/student/model/response/attendance.dart';
 
 class AttendanceServices {
   Future<AttendanceModel?> getAttendance() async {

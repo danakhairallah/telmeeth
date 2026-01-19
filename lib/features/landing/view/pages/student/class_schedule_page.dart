@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:telmeeth/core/api/controllers/time_table_controller.dart';
-import 'package:telmeeth/core/api/model/response/time_table_model.dart';
+import 'package:telmeeth/core/api/student/controllers/time_table_controller.dart';
+import 'package:telmeeth/core/api/student/model/response/time_table_model.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
-import '../../../../../core/widgets/student/drawer.dart';
-import '../../../../../core/widgets/student/navigation.dart';
-import '../../../../../core/widgets/student/student_app_bar.dart';
-
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ClassSchedule extends StatefulWidget {
@@ -264,10 +259,10 @@ class _ClassScheduleState extends State<ClassSchedule> {
                             ),
                           ),
                         );
-                      }).toList(),
+                      }),
                     ],
                   );
-                }).toList(),
+                }),
               ],
             ),
           ),

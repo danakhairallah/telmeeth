@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telmeeth/core/api/controllers/task_controller.dart';
-import 'package:telmeeth/core/api/model/request/task_request.dart';
-import 'package:telmeeth/core/api/model/response/task.dart';
-import 'package:telmeeth/core/api/model/response/task_detile_response.dart';
+import 'package:telmeeth/core/api/student/controllers/task_controller.dart';
+import 'package:telmeeth/core/api/student/model/request/task_request.dart';
+import 'package:telmeeth/core/api/student/model/response/task.dart';
+import 'package:telmeeth/core/api/student/model/response/task_submit_response.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
 
@@ -28,145 +28,90 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
   }
 
   void submitTask(Task task) async {
-    List<Answer> answers = [];
-    for (var mcq in task.multipleChoiceTasks) {
-      answers.add(Answer(
-        type: "mcq",
-        questionId: mcq.id,
-        answer: mcqAnswers[mcq.id] ?? "",
-      ));
-    }
-    for (var essay in task.essayTasks) {
-      answers.add(Answer(
-        type: "essay",
-        questionId: essay.id,
-        answer: essayAnswers[essay.id] ?? "",
-      ));
-    }
-    final request = TaskSubmitRequest(answers: answers);
+  List<Answers> answers = [];
 
-    bool success = await context.read<TaskController>().submitTask(task.id, request);
-
-    if (success) {
-      // بعد نجاح التسليم، جلب النتيجة من السيرفر
-      await context.read<TaskController>().getTaskResult(task.id);
-      final result = context.read<TaskController>().taskResult;
-
-      if (mounted && result != null) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (_) => Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(context.w(4)),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // أيقونة
-                  Container(
-                    padding: EdgeInsets.all(context.w(3)),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFFFE3C7),
-                    ),
-                    child: Icon(
-                      Icons.emoji_events_rounded,
-                      size: context.w(9),
-                      color: const Color(0xFFF39F5F),
-                    ),
-                  ),
-
-                  SizedBox(height: context.h(1.5)),
-
-                  // العنوان
-                  Text(
-                    'Task Result',
-                    style: TextStyle(
-                      fontSize: context.w(5),
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFFF39F5F),
-                    ),
-                  ),
-
-                  SizedBox(height: context.h(1)),
-
-                  // العلامة
-                  Text(
-                    '${result.studentMark} / ${result.taskFullMark}',
-                    style: TextStyle(
-                      fontSize: context.w(6),
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-
-                  SizedBox(height: context.h(0.8)),
-
-                  // حالة التصحيح
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: context.h(0.6),
-                      horizontal: context.w(4),
-                    ),
-                    decoration: BoxDecoration(
-                      color: result.status
-                          ? Colors.green.shade50
-                          : Colors.orange.shade50,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      result.status ? '✔ تم التصحيح' : '⏳ بانتظار التصحيح',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: result.status ? Colors.green : Colors.orange,
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: context.h(2)),
-
-                  // زر الإغلاق
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.pop(context); // يرجع لصفحة التاسكات
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF39F5F),
-                        padding: EdgeInsets.symmetric(vertical: context.h(1.3)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: const Text(
-                        'Done',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }
-
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to submit task.')),
-        );
-      }
-    }
+  // جمع إجابات MCQ
+  for (var mcq in task.multipleChoiceTasks) {
+    answers.add(Answers(
+      type: "mcq",
+      questionId: mcq.id,
+      answer: mcqAnswers[mcq.id] ?? "",
+    ));
   }
+
+  // جمع إجابات Essay
+  for (var essay in task.essayTasks) {
+    answers.add(Answers(
+      type: "essay",
+      questionId: essay.id,
+      answer: essayAnswers[essay.id] ?? "",
+    ));
+  }
+
+  final request = TaskSubmitRequest(answers: answers);
+
+  // استدعاء الكنترولر
+  final response = await context
+      .read<TaskController>()
+      .submitTask(task.id, request);
+
+  if (!mounted) return;
+
+  // عرض Dialog باستخدام message و totalMark
+  showSubmitDialog(context, response);
+}
+
+
+
+void showSubmitDialog(BuildContext context, TaskSubmitResponse response) {
+  final success = response.totalMark != null;
+
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Text(
+          success ? "🎉 Success" : "❌ Failed",
+          style: TextStyle(
+            color: success ? Colors.green : Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              response.message ?? "No message from server",
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            if (response.totalMark != null)
+              Text(
+                "Your Mark: ${response.totalMark}",
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // إغلاق الديالوك
+              if (success) Navigator.pop(context); // الرجوع للصفحة السابقة
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {

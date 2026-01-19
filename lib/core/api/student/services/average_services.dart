@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/response/average_detail.dart';
-import 'package:telmeeth/core/api/model/response/average_model.dart';
+import 'package:telmeeth/core/api/student/model/response/average_detail.dart';
+import 'package:telmeeth/core/api/student/model/response/average_model.dart';
 
 class AverageServices {
   Dio? dio;

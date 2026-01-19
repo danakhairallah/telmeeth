@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/model/response/marks_detile.dart';
-import 'package:telmeeth/core/api/model/response/marks_model.dart';
+import 'package:telmeeth/core/api/student/model/response/marks_detile.dart';
+import 'package:telmeeth/core/api/student/model/response/marks_model.dart';
 
 class MarksServices {
   Dio? dio;

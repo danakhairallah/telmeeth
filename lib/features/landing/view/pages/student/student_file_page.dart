@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
-import 'package:telmeeth/core/widgets/student/drawer.dart';
 import 'package:telmeeth/core/widgets/student/student_features_app_bar.dart';
-import '../../../../../core/widgets/student/navigation.dart';
-import '../../../../../core/widgets/student/student_app_bar.dart';
 
 class StudentFilePage extends StatelessWidget {
   const StudentFilePage({super.key});
