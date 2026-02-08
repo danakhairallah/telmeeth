@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/api/parent/model/response/parent_exam_model.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
+import 'package:telmeeth/core/widgets/parent/features_app_bar.dart';
 
 class ExamDetailsPage extends StatelessWidget {
   final Data exam;
@@ -10,13 +11,7 @@ class ExamDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          exam.title ?? "Exam Details",
-          style: TextStyle(fontSize: context.w(4.2)),
-        ),
-        centerTitle: true,
-      ),
+      appBar:FeaturesAppBar(),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(context.w(4)),
         child: Column(

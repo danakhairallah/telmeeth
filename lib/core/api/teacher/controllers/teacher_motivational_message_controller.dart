@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/api/teacher/model/response/teacher_motivational_message.dart';
-import 'package:telmeeth/core/api/teacher/service/teacher_motivational_message_service.dart';
+import 'package:telmeeth/core/api/teacher/services/teacher_motivational_message_service.dart';
 
 class MotivationMessageControllerTeacher with ChangeNotifier {
   final MotivationMessageServiceTeacher service;

@@ -15,7 +15,6 @@ class _DiscountsParentState extends State<DiscountsParent> {
   @override
   void initState() {
     super.initState();
-    // تحميل الداتا عند فتح الصفحة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<DiscountsController>(context, listen: false).loadDiscounts();
     });
@@ -81,68 +80,77 @@ class _DiscountsParentState extends State<DiscountsParent> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(context.h(1.4)),
-                      border: Border.all(
-                        color: const Color(0xFFE5E9F2),
-                      ),
+                      border: Border.all(color: const Color(0xFFE5E9F2)),
                     ),
                     child: students.isEmpty
                         ? Center(
-                      child: Text(
-                        "No active discounts found.",
-                        style: TextStyle(
-                          color: Colors.blueGrey,
-                          fontSize: isMobile
-                              ? context.w(3)
-                              : context.w(3.6),
-                        ),
-                      ),
-                    )
-                        : ListView.builder(
-                      itemCount: students.length,
-                      itemBuilder: (context, idx) {
-                        final student = students[idx];
-                        final discounts = student.discounts ?? [];
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              student.studentName ?? "Student",
+                            child: Text(
+                              "No active discounts found.",
                               style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: context.w(4.5),
+                                color: Colors.blueGrey,
+                                fontSize: isMobile
+                                    ? context.w(3)
+                                    : context.w(3.6),
                               ),
                             ),
-                            ...discounts.isEmpty
-                                ? [
-                              Text(
-                                "No discounts.",
-                                style: TextStyle(
-                                  color: Colors.blueGrey,
-                                  fontSize: context.w(3.3),
-                                ),
-                              )
-                            ]
-                                : discounts.map((discount) => ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              title: Text(
-                                  discount.type ?? "Discount"),
-                              subtitle: Text(
-                                  discount.note ?? ""),
-                              trailing: Text(
-                                discount.amount != null
-                                    ? '${discount.amount} JD'
-                                    : '',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green),
-                              ),
-                            )),
-                            const Divider(),
-                          ],
-                        );
-                      },
-                    ),
+                          )
+                        : ListView.builder(
+                            itemCount: students.length,
+                            itemBuilder: (context, idx) {
+                              final student = students[idx];
+                              final discounts = student.discounts ?? [];
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    student.studentName ?? "Student",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: context.w(4.5),
+                                    ),
+                                  ),
+                                  ...discounts.isEmpty
+                                      ? [
+                                          Text(
+                                            "No discounts.",
+                                            style: TextStyle(
+                                              color: Colors.blueGrey,
+                                              fontSize: context.w(3.3),
+                                            ),
+                                          ),
+                                        ]
+                                      : discounts.map(
+                                          (discount) => ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            title: Text(
+                                              discount.discountName ??
+                                                  "Discount",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            subtitle: Text(
+                                              "Percentage: ${discount.percentage ?? "-"}%\nOriginal: ${discount.originalAmount ?? "-"} JD\nFinal: ${discount.finalAmount ?? "-"} JD",
+                                              style: TextStyle(
+                                                fontSize: context.w(3),
+                                              ),
+                                            ),
+                                            trailing: Text(
+                                              discount.finalAmount != null
+                                                  ? '${discount.finalAmount} JD'
+                                                  : '',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.green,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                ],
+                              );
+                            },
+                          ),
                   ),
                 ),
               ],

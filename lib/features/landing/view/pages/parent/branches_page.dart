@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telmeeth/core/api/parent/controllers/branches_controllers.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
+import 'package:telmeeth/core/widgets/parent/features_app_bar.dart';
 
 class BranchesPage extends StatefulWidget {
   final int id;
@@ -36,9 +37,7 @@ class _BranchesPageState extends State<BranchesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.fromStudent ? "My School Branches" : "School Branches"),
-      ),
+      appBar:FeaturesAppBar(),
       body: Consumer<BranchesController>(
         builder: (context, controller, _) {
           if (controller.isLoading) {

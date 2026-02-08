@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telmeeth/core/api/parent/controllers/fees_controllers.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
+import 'package:telmeeth/core/widgets/parent/features_app_bar.dart';
 
 class FeesPage extends StatefulWidget {
   final int studentId;
@@ -20,13 +21,7 @@ class _FeesPageState extends State<FeesPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FA),
-      appBar: AppBar(
-        elevation: 0,
-        title: Text(
-          "Student Fees",
-          style: TextStyle(fontSize: context.w(4.5)),
-        ),
-      ),
+      appBar: FeaturesAppBar(),
       body: Padding(
         padding: EdgeInsets.all(context.w(4)),
         child: Column(

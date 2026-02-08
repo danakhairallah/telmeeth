@@ -38,21 +38,31 @@ class StudentDiscount {
   }
 }
 
-// خصم واحد - يمكنك تعديله بناءً على البيانات الفعلية
 class Discount {
-  final int? id;
-  final String? type;
-  final double? amount;
-  final String? note;
+  final String? discountName;
+  final double? percentage;
+  final double? originalAmount;
+  final double? finalAmount;
 
-  Discount({this.id, this.type, this.amount, this.note});
+  Discount({
+    this.discountName,
+    this.percentage,
+    this.originalAmount,
+    this.finalAmount,
+  });
 
   factory Discount.fromJson(Map<String, dynamic> json) {
     return Discount(
-      id: json['id'],
-      type: json['type'],
-      amount: (json['amount'] != null) ? double.tryParse(json['amount'].toString()) : null,
-      note: json['note'],
+      discountName: json['discount_name'],
+      percentage: json['percentage'] != null
+          ? double.tryParse(json['percentage'].toString())
+          : null,
+      originalAmount: json['original_amount'] != null
+          ? double.tryParse(json['original_amount'].toString())
+          : null,
+      finalAmount: json['final_amount'] != null
+          ? double.tryParse(json['final_amount'].toString())
+          : null,
     );
   }
 }

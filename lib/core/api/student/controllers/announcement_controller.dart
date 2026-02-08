@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telmeeth/core/api/student/services/announcement_services.dart';
 import '../model/response/announcement_model.dart';
 import '../model/response/announcement_data.dart';
@@ -24,12 +23,20 @@ class AnnouncementController with ChangeNotifier {
     notifyListeners();
 
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString("accessToken") ?? "";
-      if (token.isEmpty) return;
+      // ===== Load Student Announcements =====
+      studentModel = await _services.getStudentAnnouncements();
+      print('Student announcements length: ${studentModel?.data.length}');
+      studentModel?.data.forEach((e) {
+        print('Student: ${e.type} | ${e.text}');
+      });
 
-      studentModel = await _services.getStudentAnnouncements(token);
-      teacherModel = await _services.getTeacherAnnouncements(token);
+      // ===== Load Teacher Announcements =====
+      teacherModel = await _services.getTeacherAnnouncements();
+      print('Teacher announcements length: ${teacherModel?.data.length}');
+      teacherModel?.data.forEach((e) {
+        print('Teacher: ${e.type} | ${e.text}');
+      });
+
     } catch (e) {
       print("Announcement Error: $e");
     } finally {

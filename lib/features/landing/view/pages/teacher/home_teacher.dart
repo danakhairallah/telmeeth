@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telmeeth/core/api/teacher/controllers/announcement_controller_teacher.dart';
+import 'package:telmeeth/core/api/teacher/controllers/profile_teacher_controller.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
+import 'package:telmeeth/core/constants/responsive_value.dart';
 import 'package:telmeeth/core/widgets/teacher/teacher_app_bar.dart';
+
+// مثبتين هدول زي ما حكيت
 import 'package:telmeeth/features/landing/view/pages/teacher/announcements_teacher.dart';
 import 'package:telmeeth/features/landing/view/pages/teacher/chatbot_teacher.dart';
-import 'package:telmeeth/features/landing/view/pages/parent/my_children_parent.dart';
-import 'package:telmeeth/features/landing/view/pages/parent/transfer_requests_parent.dart';
-import 'package:telmeeth/features/landing/view/pages/parent/discounts_parent.dart';
-import 'package:telmeeth/features/landing/view/pages/parent/communities_parent.dart';
+import 'package:telmeeth/features/landing/view/pages/teacher/my_classes_teacher.dart';
+import 'package:telmeeth/features/landing/view/pages/teacher/schedule_teacher_page.dart';
+import 'package:telmeeth/features/landing/view/pages/teacher/upload_files_teacher.dart';
+
 
 class HomeTeacher extends StatefulWidget {
   const HomeTeacher({super.key});
@@ -21,76 +25,80 @@ class _HomeTeacherState extends State<HomeTeacher> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  final List<FeatureModel> features = [
-    FeatureModel(
-      title: 'My Children',
-      image: 'assets/image/feature_sample.png',
-      page: MyChildrenPage(),
-    ),
-    FeatureModel(
-      title: 'Transfer Requests',
-      image: 'assets/image/feature_sample.png',
-      page: TransferRequestsParent(),
-    ),
-    FeatureModel(
-      title: 'Discounts',
-      image: 'assets/image/feature_sample.png',
-      page: DiscountsParent(),
-    ),
-    FeatureModel(
-      title: 'Announcements',
-      image: 'assets/image/feature_sample.png',
-      page: AnnouncementsTeacher(),
-    ),
-    FeatureModel(
-      title: 'Chat Bot',
-      image: 'assets/image/feature_sample.png',
-      page: ChatBotTeacher(),
-    ),
-    FeatureModel(
-      title: 'Communities',
-      image: 'assets/image/feature_sample.png',
-      page: CommunitiesParent(),
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<AnnouncementControllerTeacher>(
-        context,
-        listen: false,
-      ).fetchAnnouncements();
+      context
+          .read<AnnouncementControllerTeacher>()
+          .fetchAnnouncements();
+      context.read<ProfileTeacherController>().getProfile();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final profileCtrl = context.watch<ProfileTeacherController>();
+    final teacherId =
+        profileCtrl.profileModel?.data?.teacherProfile?.id;
+
+    final List<FeatureModel> features = [
+      FeatureModel(
+        title: 'Announcements',
+        image: 'assets/image/feature_sample.png',
+        page: AnnouncementsTeacher(),
+      ),
+      FeatureModel(
+        title: 'Chat Bot',
+        image: 'assets/image/feature_sample.png',
+        page: ChatBotTeacher(),
+      ),
+      FeatureModel(
+        title: 'My Classes',
+        image: 'assets/image/feature_sample.png',
+        page: MyClassesTeacherPage(),
+      ),
+      if (teacherId != null)
+        FeatureModel(
+          title: 'Upload Files',
+          image: 'assets/image/feature_sample.png',
+          page: UploadFilesTeacherPage(teacherId: teacherId),
+        ),
+      if (teacherId != null)
+        FeatureModel(
+          title: 'Schedule',
+          image: 'assets/image/feature_sample.png',
+          page: ScheduleTeacherPage(teacherId: teacherId),
+        ),
+    ];
+
     return Scaffold(
       appBar: const TeacherAppBar(),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: context.h(2.5)),
+            SizedBox(height: ResponsiveValues.h(context, 2.5)),
 
-            /// ===== ANNOUNCEMENTS CAROUSEL =====
+            /// ===== ANNOUNCEMENTS =====
             Consumer<AnnouncementControllerTeacher>(
               builder: (context, ctrl, _) {
                 if (ctrl.isLoading) {
                   return SizedBox(
-                    height: context.h(22),
+                    height: ResponsiveValues.h(context, 22),
                     child: const Center(child: CircularProgressIndicator()),
                   );
                 }
 
-                final data = ctrl.announcements;
-
-                if (data.isEmpty) {
+                if (ctrl.announcements.isEmpty) {
                   return SizedBox(
-                    height: context.h(22),
+                    height: ResponsiveValues.h(context, 22),
                     child: const Center(
-                      child: Text('No announcements yet'),
+                      child: Text(
+                        'No announcements yet',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   );
                 }
@@ -98,29 +106,33 @@ class _HomeTeacherState extends State<HomeTeacher> {
                 return Column(
                   children: [
                     SizedBox(
-                      height: context.h(22),
+                      height: ResponsiveValues.h(context, 22),
                       child: PageView.builder(
                         controller: _pageController,
-                        itemCount: data.length,
-                        onPageChanged: (i) {
-                          setState(() => _currentPage = i);
-                        },
+                        itemCount: ctrl.announcements.length,
+                        onPageChanged: (i) =>
+                            setState(() => _currentPage = i),
                         itemBuilder: (context, index) {
-                          final ann = data[index];
+                          final ann = ctrl.announcements[index];
                           return Padding(
-                            padding: EdgeInsets.symmetric(horizontal: context.w(4)),
+                            padding: EdgeInsets.symmetric(
+                                horizontal:
+                                ResponsiveValues.w(context, 4)),
                             child: Container(
-                              padding: const EdgeInsets.all(16),
+                              padding:
+                              EdgeInsets.all(ResponsiveValues.w(context, 4)),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(
+                                    ResponsiveValues.radius(context, 16)),
                                 color: Colors.black,
                               ),
                               alignment: Alignment.bottomLeft,
                               child: Text(
                                 ann.text,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 16,
+                                  fontSize:
+                                  ResponsiveValues.font(context, 20),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -129,56 +141,41 @@ class _HomeTeacherState extends State<HomeTeacher> {
                         },
                       ),
                     ),
-
-                    /// ===== DOTS =====
-                    SizedBox(height: context.h(1.5)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        data.length,
-                            (index) => AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          height: 8,
-                          width: _currentPage == index ? 18 : 8,
-                          decoration: BoxDecoration(
-                            color: _currentPage == index
-                                ? Colors.orange
-                                : Colors.grey,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 );
               },
             ),
 
-            SizedBox(height: context.h(3)),
+            SizedBox(height: ResponsiveValues.h(context, 3)),
 
             /// ===== FEATURES =====
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.w(4)),
-              child: const Text(
+              padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveValues.w(context, 4)),
+              child: Text(
                 'Features',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: ResponsiveValues.font(context, 22),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
 
-            SizedBox(height: context.h(2)),
+            SizedBox(height: ResponsiveValues.h(context, 2)),
 
             SizedBox(
-              height: context.h(18),
+              height: ResponsiveValues.h(context, 18),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: context.w(4)),
+                padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveValues.w(context, 4)),
                 itemCount: features.length,
                 itemBuilder: (context, index) {
                   final feature = features[index];
                   return Container(
-                    width: context.w(22),
-                    margin: EdgeInsets.only(right: context.w(4)),
+                    width: ResponsiveValues.w(context, 22),
+                    margin: EdgeInsets.only(
+                        right: ResponsiveValues.w(context, 4)),
                     child: Column(
                       children: [
                         InkWell(
@@ -186,20 +183,26 @@ class _HomeTeacherState extends State<HomeTeacher> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => feature.page,
-                              ),
+                                  builder: (_) => feature.page),
                             );
                           },
                           child: CircleAvatar(
-                            radius: context.w(9),
+                            radius: ResponsiveValues.w(context, 9),
                             backgroundColor: Colors.orange.shade100,
+                            child: Icon(Icons.widgets,
+                                color: Colors.orange,
+                                size: ResponsiveValues.icon(context, 28)),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: ResponsiveValues.h(context, 1)),
                         Text(
                           feature.title,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 10),
+                          style: TextStyle(
+                            fontSize:
+                            ResponsiveValues.font(context, 14),
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),

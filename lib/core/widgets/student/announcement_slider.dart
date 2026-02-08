@@ -38,7 +38,11 @@ class _AnnouncementSliderState extends State<AnnouncementSlider> {
                   final a = items[i];
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: _card(a.title ?? '', a.body ?? ''),
+                    child: _card(
+                      a.type ?? 'Announcement',
+                      a.text ?? '',
+                    ),
+
                   );
                 },
               ),
@@ -71,7 +75,7 @@ class _AnnouncementSliderState extends State<AnnouncementSlider> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
-          colors: [Colors.orange.shade400, Colors.deepOrange],
+          colors: [Colors.orange.shade400, Colors.orange.shade800],
         ),
       ),
       padding: const EdgeInsets.all(16),

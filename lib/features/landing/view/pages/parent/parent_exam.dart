@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telmeeth/core/api/parent/controllers/parent_exam_controller.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
+import 'package:telmeeth/core/widgets/parent/features_app_bar.dart';
 import 'package:telmeeth/features/landing/view/pages/parent/exam_details_page.dart';
 
 class ParentExamsPage extends StatefulWidget {
@@ -26,10 +27,7 @@ class _ParentExamsPageState extends State<ParentExamsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Exams", style: TextStyle(fontSize: context.w(4.5))),
-        centerTitle: true,
-      ),
+      appBar: FeaturesAppBar(),
       body: Consumer<ParentExamController>(
         builder: (context, controller, _) {
           if (controller.isLoading) {

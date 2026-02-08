@@ -159,6 +159,9 @@ void loadRememberMe() async {
     print("Status Code: ${apiResponse.statusCode}");
     print("Message: ${apiResponse.message}");
     print("User Type: ${apiResponse.data?.type}");
+    print('USERNAME SENT: ${userNameController.text}');
+    print('PASSWORD SENT: ${passwordController.text}');
+
 
     if (apiResponse.statusCode == 200 && apiResponse.data != null) {
       final userType = apiResponse.data?.role;

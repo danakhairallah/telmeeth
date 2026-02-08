@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:telmeeth/core/widgets/parent/features_app_bar.dart';
 import '../../../../../core/constants/responsive.dart';
 
 class EditProfileParent extends StatefulWidget {
@@ -58,21 +59,7 @@ class _EditProfileParentState extends State<EditProfileParent> {
     final mainColor =  Colors.black;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: IconThemeData(color: mainColor),
-        title: Text(
-          "Edit Profile",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: context.font(22),
-            color: mainColor,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      backgroundColor: const Color(0xFFF8FAFB),
+      appBar: FeaturesAppBar(),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: context.w(5), vertical: context.h(2)),

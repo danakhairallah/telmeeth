@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
+import 'package:telmeeth/core/widgets/parent/features_app_bar.dart';
 import 'package:telmeeth/features/landing/view/pages/parent/branches_page.dart';
 import 'package:telmeeth/features/landing/view/pages/parent/fees_page.dart';
 import 'package:telmeeth/features/landing/view/pages/parent/parent_exam.dart';
@@ -23,9 +24,7 @@ class ChildDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FA),
-      appBar: AppBar(
-        title: Text(name, style: TextStyle(fontSize: context.w(4.5))),
-      ),
+      appBar: FeaturesAppBar(),
       body: Padding(
         padding: EdgeInsets.all(context.w(4)),
         child: Column(

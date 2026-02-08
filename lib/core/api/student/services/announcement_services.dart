@@ -1,32 +1,42 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:telmeeth/core/api/student/model/response/announcement_model.dart';
+import 'package:telmeeth/core/api/api_client.dart';
 
 class AnnouncementServices {
-  final String baseUrl = 'https://YOUR_BASE_URL';
+  /// ===== Get Student Announcements =====
+  Future<AnnouncementModel?> getStudentAnnouncements() async {
+    try {
+      final dio = await ApiClient.getDio();
+      final res = await dio.get('/student/announcements');
 
-  Future<AnnouncementModel?> getStudentAnnouncements(String token) async {
-    final url = Uri.parse('$baseUrl/api/student/announcements');
-    final res = await http.get(url, headers: {
-      'Authorization': 'Bearer $token',
-      'Accept': 'application/json',
-    });
-
-    if (res.statusCode == 200) {
-      return AnnouncementModel.fromJson(jsonDecode(res.body));
+      if (res.statusCode == 200) {
+        return AnnouncementModel.fromJson(res.data);
+      } else {
+        print("Student Announcements Error: Status ${res.statusCode}");
+      }
+    } on DioError catch (e) {
+      print("Dio Error (Student Announcements): ${e.message}");
+    } catch (e) {
+      print("Unknown Error (Student Announcements): $e");
     }
     return null;
   }
 
-  Future<AnnouncementModel?> getTeacherAnnouncements(String token) async {
-    final url = Uri.parse('$baseUrl/api/student/teacher-announcements');
-    final res = await http.get(url, headers: {
-      'Authorization': 'Bearer $token',
-      'Accept': 'application/json',
-    });
+  /// ===== Get Teacher Announcements =====
+  Future<AnnouncementModel?> getTeacherAnnouncements() async {
+    try {
+      final dio = await ApiClient.getDio();
+      final res = await dio.get('/student/teacher-announcements');
 
-    if (res.statusCode == 200) {
-      return AnnouncementModel.fromJson(jsonDecode(res.body));
+      if (res.statusCode == 200) {
+        return AnnouncementModel.fromJson(res.data);
+      } else {
+        print("Teacher Announcements Error: Status ${res.statusCode}");
+      }
+    } on DioError catch (e) {
+      print("Dio Error (Teacher Announcements): ${e.message}");
+    } catch (e) {
+      print("Unknown Error (Teacher Announcements): $e");
     }
     return null;
   }

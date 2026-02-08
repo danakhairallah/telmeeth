@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telmeeth/core/api/parent/controllers/school_controller.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
+import 'package:telmeeth/core/widgets/parent/features_app_bar.dart';
 import 'package:telmeeth/features/landing/view/pages/parent/branches_page.dart';
 
 class SchoolPage extends StatefulWidget {
@@ -24,13 +25,7 @@ class _SchoolPageState extends State<SchoolPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Schools",
-          style: TextStyle(fontSize: context.w(4.5)),
-        ),
-        centerTitle: true,
-      ),
+      appBar:FeaturesAppBar(),
       body: Consumer<SchoolController>(
         builder: (context, controller, _) {
           if (controller.isLoading) {

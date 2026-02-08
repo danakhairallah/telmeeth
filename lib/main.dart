@@ -17,6 +17,7 @@ import 'package:telmeeth/core/api/parent/services/student_service.dart';
 // ===== Student Controllers =====
 import 'package:telmeeth/core/api/student/controllers/auth_controller.dart';
 import 'package:telmeeth/core/api/student/controllers/attendance_controller.dart';
+import 'package:telmeeth/core/api/student/controllers/streak_controller.dart';
 import 'package:telmeeth/core/api/student/controllers/website_activity_controller.dart';
 import 'package:telmeeth/core/api/student/controllers/profile_controller.dart';
 import 'package:telmeeth/core/api/student/controllers/highlight_controller.dart';
@@ -54,11 +55,24 @@ import 'package:telmeeth/core/api/parent/controllers/motivational_messages_contr
 // ===== Parent Services =====
 import 'package:telmeeth/core/api/parent/services/motivational_messages_service.dart';
 import 'package:telmeeth/core/api/teacher/controllers/announcement_controller_teacher.dart';
+import 'package:telmeeth/core/api/teacher/controllers/attendance_teacher_controller.dart';
+import 'package:telmeeth/core/api/teacher/controllers/behavior_teacher_controller.dart';
 import 'package:telmeeth/core/api/teacher/controllers/chatbot_controller_teacher.dart';
+import 'package:telmeeth/core/api/teacher/controllers/exam_question_teacher_controller.dart';
+import 'package:telmeeth/core/api/teacher/controllers/profile_teacher_controller.dart';
+import 'package:telmeeth/core/api/teacher/controllers/schedule_teacher_controller.dart';
+import 'package:telmeeth/core/api/teacher/controllers/task_teacher_controller.dart';
+import 'package:telmeeth/core/api/teacher/controllers/teacher_classes_controller.dart';
+import 'package:telmeeth/core/api/teacher/controllers/teacher_exam_controller.dart';
 import 'package:telmeeth/core/api/teacher/controllers/teacher_motivational_message_controller.dart';
-import 'package:telmeeth/core/api/teacher/service/teacher_motivational_message_service.dart';
+import 'package:telmeeth/core/api/teacher/controllers/uplode_teacher_controller.dart';
+import 'package:telmeeth/core/api/teacher/controllers/worksheet_essay_question_controller.dart';
+import 'package:telmeeth/core/api/teacher/controllers/worksheet_multi_question_controller.dart';
+import 'package:telmeeth/core/api/teacher/controllers/worksheet_teacher_controller.dart';
+import 'package:telmeeth/core/api/teacher/services/teacher_motivational_message_service.dart';
 
 // ===== App =====
+import 'core/api/student/controllers/student_file_controller.dart';
 import 'features/landing/view/splash_page.dart';
 
 void main() async {
@@ -76,6 +90,21 @@ void main() async {
             create: (_) => MotivationMessageControllerTeacher(MotivationMessageServiceTeacher())
         ),
         ChangeNotifierProvider(create: (_) => AnnouncementControllerTeacher()),
+        ChangeNotifierProvider(create: (_) => TeacherClassesController()),
+        ChangeNotifierProvider(create: (_) => AttendanceTeacherController()),
+        ChangeNotifierProvider(create: (_) => TaskTeacherController()),
+        ChangeNotifierProvider(create: (_) => BehaviorTeacherController()),
+        ChangeNotifierProvider(create: (_) => ProfileTeacherController()),
+        ChangeNotifierProvider(create: (_) => TeacherExamController()),
+        ChangeNotifierProvider(create: (_) => ExamQuestionTeacherController()),
+        ChangeNotifierProvider(create: (_) => UplodesTeacherController()),
+        ChangeNotifierProvider(create: (_) => ScheduleTeacherController()),
+        ChangeNotifierProvider(create: (_) => WorksheetTeacherController()),
+        ChangeNotifierProvider(create: (_) => WorksheetMultiQuestionController()),
+        ChangeNotifierProvider(create: (_) => WorksheetEssayQuestionController()),
+
+
+
 
 
         // ================= STUDENT PORTAL =================
@@ -106,6 +135,9 @@ void main() async {
         ChangeNotifierProvider(create: (_) => StudentMessagesController()),
         ChangeNotifierProvider(create: (_) => ChatbotController()),
         ChangeNotifierProvider(create: (_) => BusDetailsController()),
+        ChangeNotifierProvider(create: (_) => StreakController()),
+        ChangeNotifierProvider(create: (_) => StudentFileController()),
+
 
         // ================= PARENT PORTAL =================
         ChangeNotifierProvider(create: (_) => TransferController()),

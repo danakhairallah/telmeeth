@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:telmeeth/core/api/parent/controllers/teacher_report_controller.dart';
 import 'package:telmeeth/core/api/parent/model/response/teacher_report_model.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
+import 'package:telmeeth/core/widgets/parent/features_app_bar.dart';
 
 class TeacherReportPage extends StatefulWidget {
   final int studentId;
@@ -26,9 +27,7 @@ class _TeacherReportPageState extends State<TeacherReportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Teacher Reports"),
-      ),
+      appBar:FeaturesAppBar(),
       body: Consumer<TeacherReportController>(
         builder: (context, controller, _) {
           if (controller.isLoading) {

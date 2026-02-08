@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telmeeth/core/api/parent/controllers/walking_time_controller.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
+import 'package:telmeeth/core/widgets/parent/features_app_bar.dart';
 
 class WalkingTimePage extends StatefulWidget {
   final int studentId;
@@ -26,13 +27,7 @@ class _WalkingTimePageState extends State<WalkingTimePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Walking Time",
-          style: TextStyle(fontSize: context.w(4.5)),
-        ),
-        centerTitle: true,
-      ),
+      appBar: FeaturesAppBar(),
       body: Consumer<WalkingTimeController>(
         builder: (context, controller, _) {
           if (controller.isLoading) {

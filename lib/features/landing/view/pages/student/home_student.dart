@@ -23,6 +23,7 @@ import 'package:telmeeth/features/landing/view/pages/student/reports_page.dart';
 import 'package:telmeeth/features/landing/view/pages/student/schedule_page.dart';
 import 'package:telmeeth/features/landing/view/pages/student/school_days_page.dart';
 import 'package:telmeeth/features/landing/view/pages/student/smart_assistant_page.dart';
+import 'package:telmeeth/features/landing/view/pages/student/streak_student.dart';
 import 'package:telmeeth/features/landing/view/pages/student/student_file_page.dart';
 import 'package:telmeeth/features/landing/view/pages/student/study_plan_page.dart';
 import 'package:telmeeth/features/landing/view/pages/student/tasks_page.dart';
@@ -48,6 +49,7 @@ class _HomeStudentState extends State<HomeStudent> {
 
   final List<FeatureModel> features = [
     FeatureModel(title: 'Materials', image: 'assets/image/feature_sample.png', page: const Materials()),
+    FeatureModel(title: 'Streak', image: 'assets/image/feature_sample.png', page: const StreakLeaderboardScreen()),
     FeatureModel(title: 'WorkSheets', image: 'assets/image/feature_sample.png', page: const WorkSheets()),
     FeatureModel(title: 'Tasks', image: 'assets/image/feature_sample.png', page: const Tasks()),
     FeatureModel(title: 'Exams', image: 'assets/image/feature_sample.png', page: const Exams()),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:telmeeth/core/api/parent/controllers/time_table_controller.dart';
 import 'package:telmeeth/core/api/parent/model/response/time_table_model_parent.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
+import 'package:telmeeth/core/widgets/parent/features_app_bar.dart';
 
 class TimeTablePage extends StatefulWidget {
   final int studentId;
@@ -24,13 +25,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Time Table",
-          style: TextStyle(fontSize: context.w(4.5)),
-        ),
-        centerTitle: true,
-      ),
+      appBar: FeaturesAppBar(),
       body: Consumer<TimeTableControllerParent>(
         builder: (context, controller, _) {
           if (controller.isLoading) {

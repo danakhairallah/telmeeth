@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/api/api_client.dart';
-import 'package:telmeeth/core/api/teacher/service/chatbot_service_teacher.dart';
+import 'package:telmeeth/core/api/teacher/services/chatbot_service_teacher.dart';
 import 'package:telmeeth/core/api/teacher/model/request/chatbot_request_teacher.dart';
 import 'package:telmeeth/core/api/teacher/model/response/chatbot_response_teacher.dart';
 

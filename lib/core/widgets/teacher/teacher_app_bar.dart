@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/constants/responsive.dart';
 import 'package:telmeeth/features/landing/view/pages/student/profile_page.dart';
+import 'package:telmeeth/features/landing/view/pages/teacher/profile_teacher_page.dart';
 
 import '../../../features/landing/view/pages/login/login_page.dart';
 
@@ -122,7 +123,7 @@ class TeacherAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const ProfilePage(),
+                    builder: (_) => const ProfilePageTeacher(),
                   ),
                 );
               },

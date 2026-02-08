@@ -1,22 +1,25 @@
 class AnnouncementData {
   int? id;
-  String? title;
-  String? body;
-  String? createdAt;
+  String? text;
+  String? type;
+  String? priority;
+  String? dateTime;
 
   AnnouncementData({
     this.id,
-    this.title,
-    this.body,
-    this.createdAt,
+    this.text,
+    this.type,
+    this.priority,
+    this.dateTime,
   });
 
   factory AnnouncementData.fromJson(Map<String, dynamic> json) {
     return AnnouncementData(
       id: json['id'],
-      title: json['title'],
-      body: json['body'],
-      createdAt: json['created_at'],
+      text: json['text'],
+      type: json['type'],
+      priority: json['priority'],
+      dateTime: json['date_time'],
     );
   }
 }

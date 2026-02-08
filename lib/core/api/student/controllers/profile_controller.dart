@@ -64,7 +64,6 @@ class ProfileController with ChangeNotifier{
     return null;
   }
 
-  /// إعادة تعيين الرد
   void clearProfile() {
     profileModel = null;
     notifyListeners();

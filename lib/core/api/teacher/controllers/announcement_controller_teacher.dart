@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:telmeeth/core/api/teacher/model/response/announcement_model_teacher.dart';
-import 'package:telmeeth/core/api/teacher/service/announcement_service_teacher.dart';
+import 'package:telmeeth/core/api/teacher/services/announcement_service_teacher.dart';
 
 class AnnouncementControllerTeacher with ChangeNotifier {
   final AnnouncementServiceTeacher _service = AnnouncementServiceTeacher();

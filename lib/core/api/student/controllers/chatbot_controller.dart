@@ -23,6 +23,8 @@ class ChatbotController with ChangeNotifier {
     isLoading = true;
     notifyListeners();
     lastReply = await _service.sendMessage(msg, lang: lang);
+    // أضف السطر التالي لتحديث الرسائل مباشرة بعد الإرسال
+    await fetchMessages();
     isLoading = false;
     notifyListeners();
   }
